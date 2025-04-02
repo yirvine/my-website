@@ -50,8 +50,11 @@ export default function Portfolio() {
           <div className="space-y-6">
             <p className="text-gray-300 text-lg leading-relaxed">
             I&apos;m a software engineer who builds projects that mix what I&apos;m learning with what I&apos;m into — both technically and creatively.</p>
+            <p> yada yada chemical engineer worked as a controls engineer graduated from Dalhousie with a nasty gpa buddy also obtained a masters in software engineering pivoted into this field blabla i literally love AI and im sick at it and working with APIs and system design and IM PERSONABLE cant forget that also im super random!</p>
+              
+              <p> im currently a developer with a 3PL company i love music i play piano and guitar and oh yea ive been producing it for YEARS im also into running and soccer and travelling (lol) and that and my life story</p>
             <Button variant="outline" className="rounded-full">
-              More about Me
+              Meet the team (lol just links to a pic of me)
             </Button>
           </div>
 
@@ -96,7 +99,7 @@ export default function Portfolio() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {projects.map((project, i) => (
-                <div key={project.link} className="relative aspect-[4/3] bg-gray-900 rounded-lg overflow-hidden group hover:bg-gray-800 transition-colors duration-300">
+                <div key={project.link} className="relative aspect-[2/1] bg-gray-900 rounded-lg overflow-hidden group hover:bg-gray-800 transition-colors duration-300">
                   <Image 
                     src={`/images/${i + 1}.png`} 
                     alt={project.title}
@@ -114,7 +117,7 @@ export default function Portfolio() {
           </section>
 
           {/* Stack Section */}
-          <section className="bg-blue-600 rounded-xl p-6">
+          <section className="bg-blue-800 rounded-xl p-6 max-h-[80px]">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-mono">Resume</h2>
               <Button variant="ghost" size="icon" className="text-white">
@@ -122,9 +125,9 @@ export default function Portfolio() {
               </Button>
             </div>
             <div className="flex gap-4">
-              {[1, 2, 3, 4, 5].map((i) => (
+              {/* {[1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="w-12 h-12 bg-white rounded-xl" />
-              ))}
+              ))} */}
             </div>
           </section>
 
@@ -136,11 +139,17 @@ export default function Portfolio() {
               <Button variant="ghost" size="icon" className="absolute right-4 top-4">
                 <span className="sr-only">Contact me</span>→
               </Button>
+              <div className="space-y-2 font-mono text-gray-400">
+                <p>→ Music Production</p>
+                <p>→ Video Content?</p>
+                <p>→ Could include stuff like songs im learning on piano or something idk</p>
+                <p>→ political views</p>
+              </div>
             </section>
 
             {/* Happy Clients Section */}
             <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6">
-              <h2 className="text-2xl font-mono mb-4">Shoutbox</h2>
+              <h2 className="text-2xl font-mono mb-4">Say something</h2>
               <Button variant="ghost" size="icon" className="absolute right-4 top-4">
                 <span className="sr-only">View all clients</span>→
               </Button>

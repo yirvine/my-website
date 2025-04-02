@@ -63,8 +63,8 @@ export function Shoutbox() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="h-[200px] overflow-y-auto space-y-2 p-2 bg-black/20 rounded-lg">
+    <div className="space-y-3">
+      <div className="h-[120px] overflow-y-auto space-y-2 p-2 bg-black/20 rounded-lg">
         {isLoading ? (
           <div className="text-center text-gray-400">Loading messages...</div>
         ) : messages.length === 0 ? (
@@ -91,7 +91,7 @@ export function Shoutbox() {
           placeholder="Your message..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="font-mono bg-black/20 border-gray-700 h-20"
+          className="font-mono bg-black/20 border-gray-700 h-16"
         />
         <Button type="submit" className="w-full font-mono bg-yellow-400 hover:bg-yellow-500 text-black">
           Shout!
