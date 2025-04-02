@@ -5,6 +5,24 @@ import Link from "next/link"
 import { Menu, Twitter, Linkedin, Youtube } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
+const projects = [
+  {
+    title: "Project 1",
+    description: "A brief description of your first project and what technologies you used.",
+    link: "/project1",
+  },
+  {
+    title: "Project 2",
+    description: "Details about your second project, its purpose, and the impact it had.",
+    link: "/project2",
+  },
+  {
+    title: "Project 3",
+    description: "Information about your third project, including any notable achievements.",
+    link: "/project3",
+  },
+]
+
 export default function Portfolio() {
   return (
     <div className="min-h-screen bg-black text-white p-6">
@@ -16,16 +34,14 @@ export default function Portfolio() {
             <Image src="/placeholder.svg" alt="Profile" width={60} height={60} className="rounded-full" />
             <div>
               <h1 className="text-2xl font-mono">YENE IRVINE</h1>
-              <p className="text-gray-400">is currently working on...</p>
+              <p className="text-gray-400">Things I&apos;m up to...</p>
             </div>
           </div>
 
           {/* Bio */}
           <div className="space-y-6">
             <p className="text-gray-300 text-lg leading-relaxed">
-              I specialize in crafting visually striking and user-friendly digital experiences. With a passion for
-              blending aesthetics and functionality, I bring ideas to life, creating innovative solutions in the dynamic
-              world of web design.
+              I&apos;m a software engineer with a passion for building products that help people live better lives.
             </p>
             <Button variant="outline" className="rounded-full">
               More about Me
@@ -83,9 +99,13 @@ export default function Portfolio() {
               </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="relative aspect-[4/3] bg-gray-900 rounded-lg overflow-hidden">
-                  <Image src="/placeholder.svg" alt={`Project ${i}`} fill className="object-cover" />
+              {projects.map((project, i) => (
+                <div key={project.link} className="relative aspect-[4/3] bg-gray-900 rounded-lg overflow-hidden group hover:bg-gray-800 transition-colors duration-300">
+                  <Image src="/placeholder.svg" alt={`Project ${i + 1}`} fill className="object-cover" />
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end">
+                    <h3 className="text-xl font-mono text-white mb-2">{project.title}</h3>
+                    <p className="text-sm text-gray-300">{project.description}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -110,7 +130,7 @@ export default function Portfolio() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Contact Section */}
             <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6">
-              <h2 className="text-2xl font-mono mb-4">Other stuff Im into</h2>
+              <h2 className="text-2xl font-mono mb-4">Other stuff I&apos;m up to</h2>
               <Button variant="ghost" size="icon" className="absolute right-4 top-4">
                 <span className="sr-only">Contact me</span>→
               </Button>
