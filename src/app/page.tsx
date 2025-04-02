@@ -2,29 +2,45 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { Menu, Twitter, Linkedin, Youtube } from "lucide-react"
+import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Shoutbox } from "@/components/ui/shoutbox"
-
-const projects = [
-  {
-    title: "RunIt",
-    description: "A mobile running app built with React Native. Tracks runs, connects runners, and brings data to your stride.",
-    link: "/project1",
-  },
-  {
-    title: "Boppenheimer: The AI DJ Setlist Generator",
-    description: "Cloud-based web application that leverages Spotify's web API and optimization algorithms to dynamically generate and optimize DIY-DJ set playlists.",
-    link: "/project2",
-  },
-  {
-    title: "Explainable AI in Satellite Image Classification",
-    description: "A deep learning model leveraging CNNs and applying Integrated Gradients, an XAI method, to visualize an AI model's 'thinking' process in image classification.",
-    link: "/project3",
-  },
-]
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
 export default function Portfolio() {
+  const allProjects = [
+    {
+      title: "RunIt",
+      description: "A mobile running app built with React Native. Tracks runs, connects runners, and brings data to your stride.",
+      link: "https://github.com/yirvine/runit#readme"
+    },
+    {
+      title: "Spotify Setlist Generator",
+      description: "An AI-powered tool that generates DJ setlists based on your music taste and mixing preferences.",
+      link: "https://github.com/yirvine/spotify-DJ-setlist-generator#readme"
+    },
+    {
+      title: "XAI Image Classifier",
+      description: "A deep learning model using CNNs and Integrated Gradients to visualize AI decision-making in image classification.",
+      link: "https://github.com/yirvine/XAI-in-image-classification#readme"
+    },
+    {
+      title: "Pop Music Trend Analysis",
+      description: "A PySpark-based exploration of Spotify audio data from top global artists. This project analyzes trends and builds models to predict a song's popularity based on its musical features.",
+      link: "https://github.com/yirvine/Pop-Music-Trend-Analysis#readme"
+    },
+    {
+      title: "Detecting Breathing Irregularities with Deep Learning",
+      description: "An innovative PyTorch-based 3D-Convolutional Neural Network to detect breathing patterns in sleeping clients via video to promptly identify medical emergencies. Done in collaboration with University of Calgary Biometrics Lab.",
+      link: "https://github.com/chvaldez10/Team-Design-Project#readme"
+    },
+    {
+      title: "WhoSaid",
+      description: "WhoSaid description... may have to overhaul this project to make more appealing",
+      link: "https://github.com/yirvine/who-said#readme"
+    }
+  ]
+
   return (
     <div className="min-h-screen bg-black text-white p-6">
       <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-8">
@@ -78,19 +94,24 @@ export default function Portfolio() {
           {/* Social Links */}
           <div className="space-y-4">
             <div className="flex gap-4">
-              <Button variant="ghost" size="icon" asChild>
-                <Link href="#">
-                  <Twitter className="w-5 h-5" />
+              <Button variant="ghost" size="icon" className="p-2" asChild>
+                <Link href="https://github.com/yirvine" target="_blank" rel="noopener noreferrer">
+                  <Image src="/github.svg" alt="GitHub" width={32} height={32} className="invert" />
                 </Link>
               </Button>
-              <Button variant="ghost" size="icon" asChild>
-                <Link href="#">
-                  <Linkedin className="w-5 h-5" />
+              <Button variant="ghost" size="icon" className="p-2" asChild>
+                <Link href="https://www.linkedin.com/in/yene-irvine/" target="_blank" rel="noopener noreferrer">
+                  <Image src="/linkedin.svg" alt="LinkedIn" width={32} height={32} className="invert" />
                 </Link>
               </Button>
-              <Button variant="ghost" size="icon" asChild>
-                <Link href="#">
-                  <Youtube className="w-5 h-5" />
+              <Button variant="ghost" size="icon" className="p-2" asChild>
+                <Link href="https://www.researchgate.net/profile/Yene-Irvine" target="_blank" rel="noopener noreferrer">
+                  <Image src="/researchgate.svg" alt="ResearchGate" width={32} height={32} className="invert" />
+                </Link>
+              </Button>
+              <Button variant="ghost" size="icon" className="p-2" asChild>
+                <Link href="https://instagram.com/yeneirvine" target="_blank" rel="noopener noreferrer">
+                  <Image src="/instagram.svg" alt="Instagram" width={32} height={32} className="invert" />
                 </Link>
               </Button>
             </div>
@@ -110,39 +131,37 @@ export default function Portfolio() {
           <section>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-mono">Software Projects</h2>
-              <Button variant="ghost" size="icon">
-                <span className="sr-only">View all projects</span>→
-              </Button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              {projects.map((project, i) => (
-                <a 
-                  key={project.link} 
-                  href={[
-                    "https://github.com/yirvine/runit#readme",
-                    "https://github.com/yirvine/spotify-DJ-setlist-generator#readme",
-                    "https://github.com/yirvine/XAI-in-image-classification#readme"
-                  ][i]}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block"
-                >
-                  <div className="relative aspect-[3/2] bg-gray-900 rounded-lg overflow-hidden group hover:bg-gray-800 transition-colors duration-300 cursor-pointer">
-                    <Image 
-                      src={`/images/${i + 1}.png`} 
-                      alt={project.title}
-                      fill 
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end">
-                      <h3 className="text-xl font-mono text-white mb-2">{project.title}</h3>
-                      <p className="text-sm text-gray-300">{project.description}</p>
-                    </div>
-                  </div>
-                </a>
-              ))}
-            </div>
+            <Carousel className="w-full">
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {allProjects.map((project, i) => (
+                  <CarouselItem key={i} className="pl-2 md:pl-4 md:basis-1/3">
+                    <a 
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block"
+                    >
+                      <div className="relative aspect-[3/2] bg-gray-900 rounded-lg overflow-hidden group hover:bg-gray-800 transition-colors duration-300 cursor-pointer">
+                        <Image 
+                          src={`/images/${i + 1}.png`}
+                          alt={project.title}
+                          fill 
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end">
+                          <h3 className="text-xl font-mono text-white mb-2">{project.title}</h3>
+                          <p className="text-sm text-gray-300">{project.description}</p>
+                        </div>
+                      </div>
+                    </a>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-2 bg-gray-900/50 hover:bg-gray-900/80 text-white h-24 w-24" />
+              <CarouselNext className="right-2 bg-gray-900/50 hover:bg-gray-900/80 text-white h-24 w-24" />
+            </Carousel>
           </section>
 
           {/* Stack Section */}
@@ -164,11 +183,11 @@ export default function Portfolio() {
                 <span className="sr-only">Contact me</span>→
               </Button>
               <div className="space-y-0.5 font-mono text-gray-400 text-sm">
-                <p>→ Music Production</p>
-                <p>→ pics of life? like an endless gallery of pg pics, landscape shots, a photo album that id be comfortable showing anyone</p>
-                <p>→ songs im into, songs im learnimg on piano</p>
-                <p>→ can make these individual pages for each clickable line</p>
-                <p>→ political views</p>
+                <p>→ there will be individual pages for each clickable line here</p>
+                <p>→ music stuff.. something  with my recent work or something maybe? glorywave stuff? remixes?</p>
+                <p>→ life.jpg link to an endless gallery of pg pics, landscape shots, a photo album that id be comfortable showing anyone</p>
+                <p>→ songs im into, maybe ill embed like my 10 most recent liked songs on spotify and it auto updates</p>
+                <p>→ political views of course</p>
               </div>
             </section>
 

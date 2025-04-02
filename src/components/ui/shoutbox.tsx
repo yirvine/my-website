@@ -94,7 +94,7 @@ export function Shoutbox() {
           className="font-mono bg-black/20 border-gray-700 h-16"
         />
         <Button type="submit" className="w-full font-mono bg-yellow-400 hover:bg-yellow-500 text-black">
-          Shout!
+          send it
         </Button>
       </form>
     </div>
