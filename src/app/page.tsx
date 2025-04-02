@@ -14,7 +14,7 @@ const projects = [
   },
   {
     title: "Boppenheimer: The AI DJ Setlist Generator",
-    description: "Cloud-based web application that leverages Spotify’s web API and optimization algorithms to dynamically generate and optimize DIY-DJ set playlists.",
+    description: "Cloud-based web application that leverages Spotify's web API and optimization algorithms to dynamically generate and optimize DIY-DJ set playlists.",
     link: "/project2",
   },
   {
@@ -97,7 +97,13 @@ export default function Portfolio() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {projects.map((project, i) => (
                 <div key={project.link} className="relative aspect-[4/3] bg-gray-900 rounded-lg overflow-hidden group hover:bg-gray-800 transition-colors duration-300">
-                  <Image src="/placeholder.svg" alt={`Project ${i + 1}`} fill className="object-cover" />
+                  <Image 
+                    src={`/images/${i + 1}.png`} 
+                    alt={project.title}
+                    fill 
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end">
                     <h3 className="text-xl font-mono text-white mb-2">{project.title}</h3>
                     <p className="text-sm text-gray-300">{project.description}</p>
