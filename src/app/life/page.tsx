@@ -3,8 +3,8 @@
 import ImageGallery from "./components/image-gallery"
 
 export default function Life() {
-  // Set this to true when you have real images in public/gallery/
-  const useRealImages = false
+  // Using real images now that we have them
+  const useRealImages = true
 
   return (
     <div className="min-h-screen bg-black text-white">

@@ -33,21 +33,35 @@ interface GalleryImage {
 
 export default function ImageGallery({ useRealImages = false }: { useRealImages?: boolean }) {
   const [images, setImages] = useState<GalleryImage[]>(generatePlaceholderImages(12))
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (useRealImages) {
-      // When you have real images, list them here
-      const realImageUrls = [
-        "/gallery/photo1.jpg",
-        "/gallery/photo2.jpg",
-        // ... add more photo paths
-      ]
-      
-      // Process the real images and update the gallery
-      processImageCollection(realImageUrls).then(processedImages => {
+    async function loadGalleryImages() {
+      if (!useRealImages) return
+
+      try {
+        setLoading(true)
+        setError(null)
+        
+        // Fetch list of images from our API
+        const response = await fetch('/api/gallery')
+        const data = await response.json()
+        
+        if (!response.ok) throw new Error('Failed to load gallery')
+        
+        // Process the images
+        const processedImages = await processImageCollection(data.images)
         setImages(processedImages)
-      })
+      } catch (err) {
+        console.error('Error loading gallery:', err)
+        setError('Failed to load gallery images')
+      } finally {
+        setLoading(false)
+      }
     }
+
+    loadGalleryImages()
   }, [useRealImages])
 
   const loadMorePlaceholders = () => {
@@ -59,6 +73,22 @@ export default function ImageGallery({ useRealImages = false }: { useRealImages?
       }))
       setImages(prev => [...prev, ...newImages])
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="w-full text-center py-20">
+        <p className="text-gray-400">Loading gallery...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="w-full text-center py-20">
+        <p className="text-red-400">{error}</p>
+      </div>
+    )
   }
 
   return (

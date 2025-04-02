@@ -58,7 +58,7 @@ export default function Portfolio() {
             />
             <div>
               <h1 className="text-2xl font-mono">YENE IRVINE</h1>
-              <p className="text-gray-400">some things I made</p>
+              <p className="text-gray-400">some things I built</p>
             </div>
           </div>
 
@@ -119,7 +119,7 @@ export default function Portfolio() {
         </div>
 
         {/* Right Content */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Menu Button - Only show on mobile */}
           <div className="flex justify-end lg:hidden">
             <Button variant="ghost" size="icon">
@@ -165,7 +165,7 @@ export default function Portfolio() {
           </section>
 
           {/* Stack Section */}
-          <section className="bg-blue-800 rounded-xl p-4 max-h-[70px] -mb-2">
+          <section className="bg-blue-800 rounded-xl p-4 max-h-[70px]">
             <Link 
               href="/CV-2025.pdf"
               target="_blank"
@@ -180,11 +180,11 @@ export default function Portfolio() {
           </section>
 
           {/* Other Stuff and Shoutbox Sections */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             {/* Other Stuff Section */}
             <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-3">
-              <h2 className="text-xl font-mono mb-1.5">Other stuff</h2>
-              <div className="space-y-2 font-mono text-gray-400 text-sm">
+              <h2 className="text-2xl font-mono mb-1.5">Other stuff</h2>
+              <div className="space-y-2 font-mono text-gray-400 text-base">
                 <Link href="/life" className="block hover:text-white transition-colors">
                   → life.jpg
                 </Link>
@@ -195,14 +195,14 @@ export default function Portfolio() {
                   → music i made
                 </Link>
                 <Link href="/webcam" className="block hover:text-white transition-colors">
-                  → cool webcam thingy
+                  → political views
                 </Link>
               </div>
             </section>
 
             {/* Shoutbox Section */}
             <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-3">
-              <h2 className="text-xl font-mono mb-1.5">Say something</h2>
+              <h2 className="text-2xl font-mono mb-1.5">Say hi</h2>
               <Button variant="ghost" size="icon" className="absolute right-2 top-2">
                 <span className="sr-only">Shoutbox</span>→
               </Button>
