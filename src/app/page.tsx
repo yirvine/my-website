@@ -99,19 +99,31 @@ export default function Portfolio() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {projects.map((project, i) => (
-                <div key={project.link} className="relative aspect-[2/1] bg-gray-900 rounded-lg overflow-hidden group hover:bg-gray-800 transition-colors duration-300">
-                  <Image 
-                    src={`/images/${i + 1}.png`} 
-                    alt={project.title}
-                    fill 
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end">
-                    <h3 className="text-xl font-mono text-white mb-2">{project.title}</h3>
-                    <p className="text-sm text-gray-300">{project.description}</p>
+                <a 
+                  key={project.link} 
+                  href={[
+                    "https://github.com/yirvine/runit#readme",
+                    "https://github.com/yirvine/spotify-DJ-setlist-generator#readme",
+                    "https://github.com/yirvine/XAI-in-image-classification#readme"
+                  ][i]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block"
+                >
+                  <div className="relative aspect-[2/1] bg-gray-900 rounded-lg overflow-hidden group hover:bg-gray-800 transition-colors duration-300 cursor-pointer">
+                    <Image 
+                      src={`/images/${i + 1}.png`} 
+                      alt={project.title}
+                      fill 
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end">
+                      <h3 className="text-xl font-mono text-white mb-2">{project.title}</h3>
+                      <p className="text-sm text-gray-300">{project.description}</p>
+                    </div>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           </section>
@@ -141,8 +153,10 @@ export default function Portfolio() {
               </Button>
               <div className="space-y-2 font-mono text-gray-400">
                 <p>→ Music Production</p>
-                <p>→ Video Content?</p>
+                <p>→ pics of life? like an endless gallery of funny but PG pics, cool pics, landscape shots, a photo album that id be comfortable showing anyone</p>
+                <p>→ could show off and embed like 10 songs im really into rn or something, that would be on its own page though..</p>
                 <p>→ Could include stuff like songs im learning on piano or something idk</p>
+                <p>→ not end of the world if i make these individual pages for each thing and its clickable, it doesnt need to be super advertised u know</p>
                 <p>→ political views</p>
               </div>
             </section>
