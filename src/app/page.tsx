@@ -30,8 +30,8 @@ export default function Portfolio() {
       link: "https://github.com/yirvine/Pop-Music-Trend-Analysis#readme"
     },
     {
-      title: "Detecting Breathing Irregularities with Deep Learning",
-      description: "An innovative PyTorch-based 3D-Convolutional Neural Network to detect breathing patterns in sleeping clients via video to promptly identify medical emergencies. Done in collaboration with University of Calgary Biometrics Lab.",
+      title: "Using Deep Learning to Detect Breathing Problems",
+      description: "An innovative PyTorch-based 3D Convolutional Neural Network to detect breathing patterns in sleeping clients via video to promptly identify medical emergencies. Done in collaboration with University of Calgary Biometrics Lab.",
       link: "https://github.com/chvaldez10/Team-Design-Project#readme"
     },
     {
@@ -159,8 +159,8 @@ export default function Portfolio() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="left-2 bg-gray-900/50 hover:bg-gray-900/80 text-white h-24 w-24" />
-              <CarouselNext className="right-2 bg-gray-900/50 hover:bg-gray-900/80 text-white h-24 w-24" />
+              <CarouselPrevious className="left-2 bg-gray-900/50 hover:bg-gray-900/80 text-white h-10 w-10" />
+              <CarouselNext className="right-2 bg-gray-900/50 hover:bg-gray-900/80 text-white h-10 w-10" />
             </Carousel>
           </section>
 
@@ -179,28 +179,32 @@ export default function Portfolio() {
             </Link>
           </section>
 
-          {/* Contact and Clients Sections */}
+          {/* Other Stuff and Shoutbox Sections */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Contact Section */}
+            {/* Other Stuff Section */}
             <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-3">
-              <h2 className="text-xl font-mono mb-1.5">Other stuff I&apos;m up to</h2>
-              <Button variant="ghost" size="icon" className="absolute right-2 top-2">
-                <span className="sr-only">Contact me</span>→
-              </Button>
-              <div className="space-y-0.5 font-mono text-gray-400 text-sm">
-                <p>→ there will be individual pages for each clickable line here</p>
-                <p>→ music stuff.. something  with my recent work or something maybe? glorywave stuff? remixes?</p>
-                <p>→ life.jpg link to an endless gallery of pg pics, landscape shots, a photo album that id be comfortable showing anyone</p>
-                <p>→ songs im into, maybe ill embed like my 10 most recent liked songs on spotify and it auto updates</p>
-                <p>→ political views of course</p>
+              <h2 className="text-xl font-mono mb-1.5">Other stuff</h2>
+              <div className="space-y-2 font-mono text-gray-400 text-sm">
+                <Link href="/life" className="block hover:text-white transition-colors">
+                  → life.jpg
+                </Link>
+                <Link href="/music/listening" className="block hover:text-white transition-colors">
+                  → songs i&apos;m currently into
+                </Link>
+                <Link href="/music/made" className="block hover:text-white transition-colors">
+                  → music i made
+                </Link>
+                <Link href="/webcam" className="block hover:text-white transition-colors">
+                  → cool webcam thingy
+                </Link>
               </div>
             </section>
 
-            {/* Happy Clients Section */}
+            {/* Shoutbox Section */}
             <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-3">
               <h2 className="text-xl font-mono mb-1.5">Say something</h2>
               <Button variant="ghost" size="icon" className="absolute right-2 top-2">
-                <span className="sr-only">View all clients</span>→
+                <span className="sr-only">Shoutbox</span>→
               </Button>
               <Shoutbox />
             </section>
