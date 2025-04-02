@@ -2,16 +2,12 @@
 
 import ImageGallery from "./components/image-gallery"
 
-export default function Life() {
-  // Using real images now that we have them
-  const useRealImages = true
-
+export default function LifePage() {
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-4xl font-mono mb-8">life.jpg</h1>
-        <p className="text-gray-400 mb-8">as seen on my camera roll</p>
-        <ImageGallery useRealImages={useRealImages} />
+    <div className="min-h-screen bg-black text-white p-6">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-4xl font-mono mb-8">Life</h1>
+        <ImageGallery />
       </div>
     </div>
   )
