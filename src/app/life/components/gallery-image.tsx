@@ -31,13 +31,14 @@ export default function GalleryImage({ src, alt, width, height }: GalleryImagePr
       },
     )
 
-    if (imageRef.current) {
-      observer.observe(imageRef.current)
+    const currentRef = imageRef.current
+    if (currentRef) {
+      observer.observe(currentRef)
     }
 
     return () => {
-      if (imageRef.current) {
-        observer.unobserve(imageRef.current)
+      if (currentRef) {
+        observer.unobserve(currentRef)
       }
     }
   }, [])
