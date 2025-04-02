@@ -153,10 +153,9 @@ export default function Portfolio() {
               </Button>
               <div className="space-y-2 font-mono text-gray-400">
                 <p>→ Music Production</p>
-                <p>→ pics of life? like an endless gallery of funny but PG pics, cool pics, landscape shots, a photo album that id be comfortable showing anyone</p>
-                <p>→ could show off and embed like 10 songs im really into rn or something, that would be on its own page though..</p>
-                <p>→ Could include stuff like songs im learning on piano or something idk</p>
-                <p>→ not end of the world if i make these individual pages for each thing and its clickable, it doesnt need to be super advertised u know</p>
+                <p>→ pics of life? like an endless gallery of pg pics, landscape shots, a photo album that id be comfortable showing anyone</p>
+                <p>→ songs im into, songs im learnimg on piano</p>
+                <p>→ can make these individual pages for each clickable line</p>
                 <p>→ political views</p>
               </div>
             </section>
