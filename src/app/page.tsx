@@ -48,14 +48,31 @@ export default function Portfolio() {
 
           {/* Bio */}
           <div className="space-y-6">
-            <p className="text-gray-300 text-lg leading-relaxed">
-            I&apos;m a software engineer who builds projects that mix what I&apos;m learning with what I&apos;m into — both technically and creatively.</p>
-            <p> yada yada chemical engineer worked as a controls engineer graduated from Dalhousie with a nasty gpa buddy also obtained a masters in software engineering pivoted into this field blabla i literally love AI and im sick at it and working with APIs and system design and IM PERSONABLE cant forget that also im super random!</p>
-              
-              <p> im currently a developer with a 3PL company i love music i play piano and guitar and oh yea ive been producing it for YEARS im also into running and soccer and travelling (lol) and that and my life story</p>
-            <Button variant="outline" className="rounded-full">
-              Meet the team (lol just links to a pic of me)
-            </Button>
+            <p className="text-gray-300 text-lg leading-relaxed text-justify">
+            I&apos;m a software engineer who builds projects that mix what I&apos;m 
+            learning with what I&apos;m into — both technically and creatively.</p>
+
+            <p className="text-justify"> I originally graduated from Dalhousie University with a Chemical Engineering 
+              degree and worked as a controls engineer, where I was exposed to 
+              software development through building backend programs and scripting 
+              for industrial automation systems. That experience sparked an 
+              interest in development, leading me to complete a Master&apos;s in Software
+              Engineering at the University of Calgary — and pivot into 
+              a full-time career in software engineering.
+            </p>
+            <p className="text-justify"> I&apos;m especially passionate about AI, system design, and working with APIs. 
+              I love building things that are both technically interesting and creatively 
+              fulfilling. As much as I enjoy working on independent projects
+               (like most projects on my GitHub), I&apos;m also a social person by nature and
+                like bouncing ideas around and building things with others.
+            </p>
+            <p className="text-justify">
+              Outside of work, I&apos;m into music. I play piano, guitar, and produce electronic stuff. 
+              I&apos;m also into running, soccer, and traveling when I get the chance.    
+            </p>
+            {/* <Button variant="outline" className="rounded-full">
+              Meet the team
+            </Button> */}
           </div>
 
           {/* Social Links */}
@@ -81,7 +98,7 @@ export default function Portfolio() {
         </div>
 
         {/* Right Content */}
-        <div className="space-y-8">
+        <div className="space-y-6">
           {/* Menu Button - Only show on mobile */}
           <div className="flex justify-end lg:hidden">
             <Button variant="ghost" size="icon">
@@ -110,7 +127,7 @@ export default function Portfolio() {
                   rel="noopener noreferrer"
                   className="block"
                 >
-                  <div className="relative aspect-[2/1] bg-gray-900 rounded-lg overflow-hidden group hover:bg-gray-800 transition-colors duration-300 cursor-pointer">
+                  <div className="relative aspect-[3/2] bg-gray-900 rounded-lg overflow-hidden group hover:bg-gray-800 transition-colors duration-300 cursor-pointer">
                     <Image 
                       src={`/images/${i + 1}.png`} 
                       alt={project.title}
@@ -129,29 +146,24 @@ export default function Portfolio() {
           </section>
 
           {/* Stack Section */}
-          <section className="bg-blue-800 rounded-xl p-6 max-h-[80px]">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-mono">Resume</h2>
+          <section className="bg-blue-800 rounded-xl p-4 max-h-[70px] -mb-2">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-mono">Download my CV</h2>
               <Button variant="ghost" size="icon" className="text-white">
                 <span className="sr-only">View all tools</span>→
               </Button>
-            </div>
-            <div className="flex gap-4">
-              {/* {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="w-12 h-12 bg-white rounded-xl" />
-              ))} */}
             </div>
           </section>
 
           {/* Contact and Clients Sections */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Contact Section */}
-            <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6">
-              <h2 className="text-2xl font-mono mb-4">Other stuff I&apos;m up to</h2>
-              <Button variant="ghost" size="icon" className="absolute right-4 top-4">
+            <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-3">
+              <h2 className="text-xl font-mono mb-1.5">Other stuff I&apos;m up to</h2>
+              <Button variant="ghost" size="icon" className="absolute right-2 top-2">
                 <span className="sr-only">Contact me</span>→
               </Button>
-              <div className="space-y-2 font-mono text-gray-400">
+              <div className="space-y-0.5 font-mono text-gray-400 text-sm">
                 <p>→ Music Production</p>
                 <p>→ pics of life? like an endless gallery of pg pics, landscape shots, a photo album that id be comfortable showing anyone</p>
                 <p>→ songs im into, songs im learnimg on piano</p>
@@ -161,9 +173,9 @@ export default function Portfolio() {
             </section>
 
             {/* Happy Clients Section */}
-            <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6">
-              <h2 className="text-2xl font-mono mb-4">Say something</h2>
-              <Button variant="ghost" size="icon" className="absolute right-4 top-4">
+            <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-3">
+              <h2 className="text-xl font-mono mb-1.5">Say something</h2>
+              <Button variant="ghost" size="icon" className="absolute right-2 top-2">
                 <span className="sr-only">View all clients</span>→
               </Button>
               <Shoutbox />
