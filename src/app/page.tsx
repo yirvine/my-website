@@ -35,9 +35,9 @@ export default function Portfolio() {
       link: "https://github.com/chvaldez10/Team-Design-Project#readme"
     },
     {
-      title: "WhoSaid",
-      description: "WhoSaid description... may have to overhaul this project to make more appealing",
-      link: "https://github.com/yirvine/who-said#readme"
+      title: "This Website",
+      description: "The code behind how this portfolio was built",
+      link: "https://github.com/yirvine/my-website"
     }
   ]
 
