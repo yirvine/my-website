@@ -32,24 +32,19 @@ interface GalleryImage {
   orientation?: "landscape" | "portrait"
 }
 
-export default function ImageGallery({ useRealImages = false }: { useRealImages?: boolean }) {
-  const [images, setImages] = useState<GalleryImage[]>(generatePlaceholderImages(12))
-  const [loading, setLoading] = useState(false)
+export default function ImageGallery() {
+  const [images, setImages] = useState<GalleryImage[]>([])
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function loadGalleryImages() {
-      if (!useRealImages) return
-
       try {
-        setLoading(true)
         setError(null)
         
         // Fetch list of images from our API
         const response = await fetch('/api/gallery')
         const data = await response.json()
-        
-        if (!response.ok) throw new Error('Failed to load gallery')
         
         // Process the images to get their dimensions and orientation
         const processedImages = await processImageCollection(data.images)
@@ -74,17 +69,15 @@ export default function ImageGallery({ useRealImages = false }: { useRealImages?
     }
 
     loadGalleryImages()
-  }, [useRealImages])
+  }, [])
 
   const loadMorePlaceholders = () => {
-    if (!useRealImages) {
-      const currentLength = images.length
-      const newImages = generatePlaceholderImages(6).map(img => ({
-        ...img,
-        id: img.id + currentLength
-      }))
-      setImages(prev => [...prev, ...newImages])
-    }
+    const currentLength = images.length
+    const newImages = generatePlaceholderImages(6).map(img => ({
+      ...img,
+      id: img.id + currentLength
+    }))
+    setImages(prev => [...prev, ...newImages])
   }
 
   if (loading) {
@@ -119,16 +112,14 @@ export default function ImageGallery({ useRealImages = false }: { useRealImages?
         })}
       </div>
 
-      {!useRealImages && (
-        <div className="flex justify-center mt-8">
-          <button
-            className="px-6 py-2 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors"
-            onClick={loadMorePlaceholders}
-          >
-            Load More
-          </button>
-        </div>
-      )}
+      <div className="flex justify-center mt-8">
+        <button
+          className="px-6 py-2 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors"
+          onClick={loadMorePlaceholders}
+        >
+          Load More
+        </button>
+      </div>
     </div>
   )
 }
