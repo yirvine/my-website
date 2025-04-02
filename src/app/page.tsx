@@ -110,7 +110,7 @@ export default function Portfolio() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Contact Section */}
             <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6">
-              <h2 className="text-2xl font-mono mb-4">Other stuff I'm into</h2>
+              <h2 className="text-2xl font-mono mb-4">Other stuff Im into</h2>
               <Button variant="ghost" size="icon" className="absolute right-4 top-4">
                 <span className="sr-only">Contact me</span>→
               </Button>
