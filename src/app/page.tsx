@@ -4,21 +4,22 @@ import Image from "next/image"
 import Link from "next/link"
 import { Menu, Twitter, Linkedin, Youtube } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Shoutbox } from "@/components/ui/shoutbox"
 
 const projects = [
   {
-    title: "Project 1",
-    description: "A brief description of your first project and what technologies you used.",
+    title: "RunIt",
+    description: "A mobile running app built with React Native. Tracks runs, connects runners, and brings data to your stride.",
     link: "/project1",
   },
   {
-    title: "Project 2",
-    description: "Details about your second project, its purpose, and the impact it had.",
+    title: "Boppenheimer: The AI DJ Setlist Generator",
+    description: "Cloud-based web application that leverages Spotify’s web API and optimization algorithms to dynamically generate and optimize DIY-DJ set playlists.",
     link: "/project2",
   },
   {
-    title: "Project 3",
-    description: "Information about your third project, including any notable achievements.",
+    title: "Explainable AI in Satellite Image Classification",
+    description: "A deep learning model leveraging CNNs and applying Integrated Gradients, an XAI method, to visualize an AI model's 'thinking' process in image classification.",
     link: "/project3",
   },
 ]
@@ -31,7 +32,14 @@ export default function Portfolio() {
         <div className="space-y-8">
           {/* Profile Header */}
           <div className="flex items-center gap-4">
-            <Image src="/placeholder.svg" alt="Profile" width={60} height={60} className="rounded-full" />
+            <Image
+              src="/images/profile.jpg"
+              alt="Profile"
+              width={60}
+              height={60}
+              className="rounded-full object-cover"
+              priority
+            />
             <div>
               <h1 className="text-2xl font-mono">YENE IRVINE</h1>
               <p className="text-gray-400">Things I&apos;m up to...</p>
@@ -41,8 +49,7 @@ export default function Portfolio() {
           {/* Bio */}
           <div className="space-y-6">
             <p className="text-gray-300 text-lg leading-relaxed">
-              I&apos;m a software engineer with a passion for building products that help people live better lives.
-            </p>
+            I&apos;m a software engineer who builds projects that mix what I&apos;m learning with what I&apos;m into — both technically and creatively.</p>
             <Button variant="outline" className="rounded-full">
               More about Me
             </Button>
@@ -66,17 +73,6 @@ export default function Portfolio() {
                   <Youtube className="w-5 h-5" />
                 </Link>
               </Button>
-            </div>
-            <div className="text-gray-400 text-sm">
-              <p>© by UIhub in Framer</p>
-              <div className="flex gap-4">
-                <Link href="#" className="hover:text-white">
-                  Licensing
-                </Link>
-                <Link href="#" className="hover:text-white">
-                  404
-                </Link>
-              </div>
             </div>
           </div>
         </div>
@@ -114,7 +110,7 @@ export default function Portfolio() {
           {/* Stack Section */}
           <section className="bg-blue-600 rounded-xl p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-mono">My Stack</h2>
+              <h2 className="text-2xl font-mono">Resume</h2>
               <Button variant="ghost" size="icon" className="text-white">
                 <span className="sr-only">View all tools</span>→
               </Button>
@@ -137,28 +133,12 @@ export default function Portfolio() {
             </section>
 
             {/* Happy Clients Section */}
-            <section className="bg-gray-900 rounded-xl p-6">
-              <div className="flex items-center gap-2 mb-2">
-                {[...Array(5)].map((_, i) => (
-                  <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                ))}
-              </div>
-              <h3 className="text-4xl font-bold mb-4">100%</h3>
-              <p className="text-gray-400">Happy Clients</p>
-              <div className="flex -space-x-2 mt-4">
-                {[1, 2, 3].map((i) => (
-                  <Image
-                    key={i}
-                    src="/placeholder.svg"
-                    alt={`Client ${i}`}
-                    width={40}
-                    height={40}
-                    className="rounded-full border-2 border-gray-900"
-                  />
-                ))}
-              </div>
+            <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6">
+              <h2 className="text-2xl font-mono mb-4">Shoutbox</h2>
+              <Button variant="ghost" size="icon" className="absolute right-4 top-4">
+                <span className="sr-only">View all clients</span>→
+              </Button>
+              <Shoutbox />
             </section>
           </div>
         </div>
