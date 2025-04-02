@@ -58,7 +58,7 @@ export default function Portfolio() {
             />
             <div>
               <h1 className="text-2xl font-mono">YENE IRVINE</h1>
-              <p className="text-gray-400">Things I&apos;m up to...</p>
+              <p className="text-gray-400">some things I made</p>
             </div>
           </div>
 
@@ -166,12 +166,17 @@ export default function Portfolio() {
 
           {/* Stack Section */}
           <section className="bg-blue-800 rounded-xl p-4 max-h-[70px] -mb-2">
-            <div className="flex justify-between items-center">
+            <Link 
+              href="/CV-2025.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex justify-between items-center hover:opacity-80 transition-opacity"
+            >
               <h2 className="text-2xl font-mono">Download my CV</h2>
               <Button variant="ghost" size="icon" className="text-white">
-                <span className="sr-only">View all tools</span>→
+                <span className="sr-only">Download CV</span>→
               </Button>
-            </div>
+            </Link>
           </section>
 
           {/* Contact and Clients Sections */}
