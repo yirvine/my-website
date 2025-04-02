@@ -3,20 +3,33 @@
 import { useState, useEffect } from "react"
 import GalleryImage from "./gallery-image"
 
+interface GalleryImageData {
+  id: number
+  src: string
+  alt: string
+  width: number
+  height: number
+  orientation: "landscape" | "portrait"
+}
+
 // This would be replaced with your actual image data
-const generatePlaceholderImages = (count: number) => {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i,
-    src: `/placeholder.svg?height=${Math.floor(Math.random() * 200) + 300}&width=${Math.floor(Math.random() * 200) + 300}`,
-    alt: `Gallery image ${i + 1}`,
-    width: Math.floor(Math.random() * 200) + 300,
-    height: Math.floor(Math.random() * 200) + 300,
-    orientation: Math.random() > 0.3 ? "landscape" : "portrait",
-  }))
+const generatePlaceholderImages = (count: number): GalleryImageData[] => {
+  return Array.from({ length: count }, (_, i) => {
+    const width = Math.floor(Math.random() * 200) + 300
+    const height = Math.floor(Math.random() * 200) + 300
+    return {
+      id: i,
+      src: `/placeholder.svg?height=${height}&width=${width}`,
+      alt: `Gallery image ${i + 1}`,
+      width,
+      height,
+      orientation: width > height ? "landscape" : "portrait",
+    }
+  })
 }
 
 export default function MasonryGallery() {
-  const [images, setImages] = useState<any[]>([])
+  const [images, setImages] = useState<GalleryImageData[]>([])
 
   useEffect(() => {
     // In a real app, you would fetch your images from an API or data source
@@ -24,8 +37,8 @@ export default function MasonryGallery() {
   }, [])
 
   // Create column arrays for masonry layout
-  const getColumns = () => {
-    const columns = [[], [], [], []]
+  const getColumns = (): GalleryImageData[][] => {
+    const columns: GalleryImageData[][] = [[], [], [], []]
 
     images.forEach((image, index) => {
       const columnIndex = index % 4
@@ -43,13 +56,17 @@ export default function MasonryGallery() {
         {columns.map((column, columnIndex) => (
           <div key={columnIndex} className="flex-1 flex flex-col gap-4">
             {column.map((image) => (
-              <div key={image.id} className="w-full overflow-hidden rounded-lg">
+              <div 
+                key={image.id} 
+                className={`w-full overflow-hidden rounded-lg ${
+                  image.orientation === "portrait" ? "row-span-2" : ""
+                }`}
+              >
                 <GalleryImage
                   src={image.src}
                   alt={image.alt}
                   width={image.width}
                   height={image.height}
-                  orientation={image.orientation}
                 />
               </div>
             ))}
