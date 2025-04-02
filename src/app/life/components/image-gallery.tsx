@@ -5,7 +5,7 @@ import GalleryImage from "./gallery-image"
 import { processImageCollection } from "../utils/image-helpers"
 
 // Generate placeholder images with deterministic dimensions
-const generatePlaceholderImages = (count: number) => {
+const generatePlaceholderImages = (count: number): GalleryImage[] => {
   return Array.from({ length: count }, (_, i) => {
     // Use index to generate deterministic dimensions
     const isPortrait = i % 2 === 0
@@ -18,6 +18,7 @@ const generatePlaceholderImages = (count: number) => {
       alt: `Gallery image ${i + 1}`,
       width,
       height,
+      orientation: isPortrait ? "portrait" : "landscape"
     }
   })
 }
@@ -50,9 +51,20 @@ export default function ImageGallery({ useRealImages = false }: { useRealImages?
         
         if (!response.ok) throw new Error('Failed to load gallery')
         
-        // Process the images
+        // Process the images to get their dimensions and orientation
         const processedImages = await processImageCollection(data.images)
-        setImages(processedImages)
+        
+        // Transform ProcessedImage to GalleryImage
+        const galleryImages: GalleryImage[] = processedImages.map((img, index) => ({
+          id: index,
+          src: img.url,
+          alt: `Gallery image ${index + 1}`,
+          width: img.width,
+          height: img.height,
+          orientation: img.orientation
+        }))
+        
+        setImages(galleryImages)
       } catch (err) {
         console.error('Error loading gallery:', err)
         setError('Failed to load gallery images')
