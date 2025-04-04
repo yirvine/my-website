@@ -104,7 +104,7 @@ public/build/
 
 # Gatsby files
 .cache/
-public/
+# public/
 
 # Mac files
 .DS_Store
