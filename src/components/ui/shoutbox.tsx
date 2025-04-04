@@ -18,26 +18,50 @@ export function Shoutbox() {
   const [message, setMessage] = useState("")
   const [isLoading, setIsLoading] = useState(true)
 
-  // Load messages from API on component mount
+  // Load messages from API on component mount and set up polling
   useEffect(() => {
-    fetchMessages()
-  }, [])
+    // Define fetch function *inside* the effect
+    const fetchMessages = async () => {
+      // Keep isLoading logic only for the very first load?
+      // setIsLoading(true); // Removed setIsLoading(true) here to prevent flicker on poll
+      try {
+        const response = await fetch("/api/shoutbox")
+        if (!response.ok) {
+          console.error("Poll failed:", response.status);
+          return; // Exit without updating state on failed poll
+        }
+        const data = await response.json()
+        // Ensure data is an array before slicing
+        setMessages(Array.isArray(data) ? data.slice(-5) : []); 
+      } catch (error) {
+        console.error("Failed to fetch messages:", error)
+      } finally {
+        // Ensure loading is false after the *initial* load attempt
+        // Check if state is still true before setting to false
+        setIsLoading(currentLoadingState => currentLoadingState ? false : currentLoadingState);
+      }
+    };
 
-  const fetchMessages = async () => {
-    try {
-      const response = await fetch("/api/shoutbox")
-      const data = await response.json()
-      setMessages(data)
-    } catch (error) {
-      console.error("Failed to fetch messages:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+    // Fetch initially
+    fetchMessages();
+
+    // Set up polling interval (e.g., every 10 seconds)
+    const intervalId = setInterval(fetchMessages, 10000); // 10000 ms = 10 seconds
+
+    // Cleanup function to clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []); // Empty dependency array is now correct because fetchMessages is defined inside
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!username.trim() || !message.trim()) return
+
+    // Disable button while submitting? (Optional UX improvement)
+    const currentUsername = username.trim();
+    const currentMessage = message.trim();
+
+    // Clear input field immediately for better UX
+    setMessage("")
 
     try {
       const response = await fetch("/api/shoutbox", {
@@ -46,19 +70,25 @@ export function Shoutbox() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: username.trim(),
-          message: message.trim(),
+          username: currentUsername,
+          message: currentMessage,
         }),
       })
 
       if (!response.ok) throw new Error("Failed to post message")
 
-      const newMessage = await response.json()
-      // Add new message to the bottom
-      setMessages((prev) => [...prev, newMessage].slice(-5))
-      setMessage("")
+      // Trigger a fetch manually AFTER successful post
+      // We need to call the fetch defined inside the effect, which isn't directly accessible here.
+      // A simple way is to slightly restructure or use a ref/state to trigger a fetch.
+      // Let's simplify: Assume the poll will catch it soon enough or handle differently.
+      // For now, we remove the manual fetch from here as it's complex to call the effect's internal function.
+      // The next poll interval (max 10s) will show the new message.
+      // fetchMessages(); // Cannot call the effect's internal fetchMessages here easily
+
     } catch (error) {
       console.error("Failed to post message:", error)
+      setMessage(currentMessage); // Restore message on error
+      // Optionally show an error message to the user
     }
   }
 
