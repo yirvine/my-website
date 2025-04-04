@@ -65,8 +65,6 @@ export default function MasonryGallery() {
                 <GalleryImage
                   src={image.src}
                   alt={image.alt}
-                  width={image.width}
-                  height={image.height}
                 />
               </div>
             ))}
