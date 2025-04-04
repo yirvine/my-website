@@ -6,6 +6,7 @@ import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Shoutbox } from "@/components/ui/shoutbox"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { useEffect } from 'react'
 
 export default function Portfolio() {
   const allProjects = [
@@ -48,8 +49,9 @@ export default function Portfolio() {
     });
   };
 
-  // Call this function with your image URLs on the main page
-  preloadImages(['/path/to/image1.jpg', '/path/to/image2.jpg']);
+  useEffect(() => {
+    preloadImages(['/path/to/image1.jpg', '/path/to/image2.jpg']);
+  }, []);
 
   return (
     <div className="min-h-screen bg-black text-white p-6">
