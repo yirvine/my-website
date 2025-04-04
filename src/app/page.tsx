@@ -41,6 +41,16 @@ export default function Portfolio() {
     }
   ]
 
+  const preloadImages = (imageUrls: string[]) => {
+    imageUrls.forEach((url: string) => {
+      const img = new window.Image();
+      img.src = url;
+    });
+  };
+
+  // Call this function with your image URLs on the main page
+  preloadImages(['/path/to/image1.jpg', '/path/to/image2.jpg']);
+
   return (
     <div className="min-h-screen bg-black text-white p-6">
       <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-8">
@@ -188,12 +198,12 @@ export default function Portfolio() {
                 <Link href="/life" className="block hover:text-white transition-colors">
                   → life.jpg
                 </Link>
-                <Link href="/music/listening" className="block hover:text-white transition-colors">
+                {/* <Link href="/music/listening" className="block hover:text-white transition-colors">
                   → songs i&apos;m currently into
                 </Link>
                 <Link href="/music/made" className="block hover:text-white transition-colors">
                   → music i made
-                </Link>
+                </Link> */}
                 <Link href="/webcam" className="block hover:text-white transition-colors">
                   → political views
                 </Link>
