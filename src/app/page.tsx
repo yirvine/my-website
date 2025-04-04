@@ -102,11 +102,11 @@ export default function Portfolio() {
 
           {/* Bio */}
           <div className="space-y-6">
-            <p className="text-gray-300 text-lg leading-relaxed text-justify">
+            <p className="text-gray-50 text-lg leading-relaxed text-justify">
             I&apos;m a software engineer who builds projects that mix what I&apos;m 
             learning with what I&apos;m into — both technically and creatively.</p>
 
-            <p className="text-justify"> I originally graduated from Dalhousie University with a Chemical Engineering 
+            <p className="text-justify text-gray-200"> I originally graduated from Dalhousie University with a Chemical Engineering 
               degree and worked as a controls engineer, where I was exposed to 
               software development through building backend programs and scripting 
               for industrial automation systems. That experience sparked an 
@@ -114,13 +114,13 @@ export default function Portfolio() {
               Engineering at the University of Calgary — and pivot into 
               a full-time career in software engineering.
             </p>
-            <p className="text-justify"> I&apos;m especially passionate about AI, system design, and working with APIs. 
+            <p className="text-justify text-gray-200"> I&apos;m especially passionate about AI, system design, and working with APIs. 
               I love building things that are both technically interesting and creatively 
               fulfilling. As much as I enjoy working on independent projects
                (like most projects on my GitHub), I&apos;m also a social person by nature and
                 like bouncing ideas around and building things with others.
             </p>
-            <p className="text-justify">
+            <p className="text-justify text-gray-200">
               Outside of work, I&apos;m into music. I play piano, guitar, and produce electronic stuff. 
               I&apos;m also into running, soccer, and traveling when I get the chance.    
             </p>
@@ -234,7 +234,7 @@ export default function Portfolio() {
                   → music i made
                 </Link> */}
                 <Link href="/webcam" className="block hover:text-white transition-colors">
-                  → political views
+                  → political content
                 </Link>
               </div>
             </section>
