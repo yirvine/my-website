@@ -68,7 +68,7 @@ export default function GalleryImage({ src, alt, loading = "lazy" }: GalleryImag
   return (
     <div
       ref={imageRef}
-      className={`w-full h-auto overflow-hidden bg-gray-900 rounded-lg relative transition-opacity duration-700 ease-in-out ${
+      className={`w-full overflow-hidden bg-gray-900 rounded-lg relative transition-opacity duration-700 ease-in-out ${
         isVisible ? "opacity-100" : "opacity-0"
       } ${dimensions ? aspectRatio : 'aspect-video'}`}
       style={{ minHeight: '150px' }}

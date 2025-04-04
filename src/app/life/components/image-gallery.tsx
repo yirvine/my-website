@@ -3,39 +3,6 @@
 import { useState, useEffect } from "react"
 import GalleryImage from "./gallery-image"
 
-// Generate placeholder images with deterministic dimensions
-const generatePlaceholderImages = (count: number): GalleryImage[] => {
-  return Array.from({ length: count }, (_, i) => {
-    // Use index to generate deterministic dimensions
-    const isPortrait = i % 2 === 0
-    const width = isPortrait ? 400 : 600
-    const height = isPortrait ? 600 : 400
-
-    return {
-      id: i,
-      src: `/placeholder.svg?height=${height}&width=${width}`,
-      alt: `Gallery image ${i + 1}`,
-      width,
-      height,
-      orientation: isPortrait ? "portrait" : "landscape"
-    }
-  })
-}
-
-interface GalleryImage {
-  id: number
-  src: string
-  alt: string
-  width: number
-  height: number
-  orientation?: "landscape" | "portrait"
-}
-
-interface GalleryImageProps {
-  src: string
-  alt: string
-}
-
 export default function ImageGallery() {
   const [imageUrls, setImageUrls] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
@@ -61,9 +28,11 @@ export default function ImageGallery() {
           throw new Error('Invalid image data format from API');
         }
 
-      } catch (err: any) { // Type error explicitly
+      } catch (err: unknown) { // FIX: Use unknown instead of any
         console.error('Error loading gallery URLs:', err)
-        setError(err.message || 'Failed to load gallery images')
+        // Check if err is an Error object before accessing message
+        const message = err instanceof Error ? err.message : 'Failed to load gallery images';
+        setError(message)
       } finally {
         setLoading(false)
       }
