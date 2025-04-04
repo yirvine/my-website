@@ -71,9 +71,4 @@ export async function POST(request: Request) {
     console.error("Error posting message to Redis:", error);
     return NextResponse.json({ error: "Failed to post message" }, { status: 500 });
   }
-}
-
-// Optional: Handle cases where the method is not GET or POST
-export async function handler(request: Request) {
-    return NextResponse.json({ error: `Method ${request.method} Not Allowed` }, { status: 405 });
 } 
