@@ -42,14 +42,14 @@ export default function Portfolio() {
     }
   ]
 
-  const preloadImages = (imageUrls: string[]) => {
-    imageUrls.forEach((url: string) => {
-      const img = new window.Image();
-      img.src = url;
-    });
-  };
-
   useEffect(() => {
+    const preloadImages = (imageUrls: string[]) => {
+      imageUrls.forEach((url: string) => {
+        const img = new window.Image();
+        img.src = url;
+      });
+    };
+
     preloadImages(['/path/to/image1.jpg', '/path/to/image2.jpg']);
   }, []);
 
@@ -161,6 +161,7 @@ export default function Portfolio() {
                           fill 
                           className="object-cover"
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          loading={i < 10 ? "eager" : "lazy"}
                         />
                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end">
                           <h3 className="text-xl font-mono text-white mb-2">{project.title}</h3>
