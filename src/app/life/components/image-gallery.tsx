@@ -2,46 +2,103 @@
 
 import { useState, useEffect } from "react"
 import GalleryImage from "./gallery-image"
+import { getImageDimensions } from "../utils/image-helpers" // Re-import helper
+
+// Combined type for image data including dimensions
+interface GalleryImageData {
+  id: number | string // Use index or URL as ID
+  src: string
+  alt: string
+  width: number
+  height: number
+  orientation: "landscape" | "portrait"
+}
 
 export default function ImageGallery() {
+  // State for the final image data including dimensions
+  const [images, setImages] = useState<GalleryImageData[]>([])
+  // State just for the initial list of URLs
   const [imageUrls, setImageUrls] = useState<string[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loadingUrls, setLoadingUrls] = useState(true)
+  // const [loadingDimensions, setLoadingDimensions] = useState(false) // REMOVE UNUSED STATE
   const [error, setError] = useState<string | null>(null)
 
+  // Effect 1: Fetch initial list of image URLs
   useEffect(() => {
     async function loadGalleryUrls() {
       try {
         setError(null)
-        setLoading(true) // Ensure loading is true at the start
-        
-        // Fetch list of image URLs from our API
+        setLoadingUrls(true)
         const response = await fetch('/api/gallery')
-        if (!response.ok) {
-          throw new Error('Failed to fetch gallery URLs');
-        }
+        if (!response.ok) throw new Error('Failed to fetch gallery URLs');
         const data = await response.json()
-
-        // Assuming the API returns { images: ['/gallery/img1.jpg', ...] }
         if (data && Array.isArray(data.images)) {
           setImageUrls(data.images)
         } else {
           throw new Error('Invalid image data format from API');
         }
-
-      } catch (err: unknown) { // FIX: Use unknown instead of any
+      } catch (err: unknown) {
         console.error('Error loading gallery URLs:', err)
-        // Check if err is an Error object before accessing message
-        const message = err instanceof Error ? err.message : 'Failed to load gallery images';
+        const message = err instanceof Error ? err.message : 'Failed to load gallery URLs';
         setError(message)
       } finally {
-        setLoading(false)
+        setLoadingUrls(false)
       }
     }
-
     loadGalleryUrls()
   }, [])
 
-  if (loading) {
+  // Effect 2: Fetch dimensions once URLs are loaded
+  useEffect(() => {
+    if (imageUrls.length === 0) return; // Don't run if no URLs
+
+    async function fetchAllDimensions() {
+      // setLoadingDimensions(true) // REMOVE USAGE
+      setError(null) // Clear previous errors
+      try {
+        console.log(`Fetching dimensions for ${imageUrls.length} images...`);
+        // Fetch all dimensions in parallel
+        const dimensionPromises = imageUrls.map(url => getImageDimensions(url));
+        const dimensionsResults = await Promise.allSettled(dimensionPromises);
+
+        const loadedImages: GalleryImageData[] = [];
+        dimensionsResults.forEach((result, index) => {
+          const url = imageUrls[index];
+          if (result.status === 'fulfilled') {
+            const { width, height } = result.value;
+            const orientation = width > height ? "landscape" : "portrait";
+            loadedImages.push({
+              id: url, // Use URL as unique ID
+              src: url,
+              alt: `Gallery image ${index + 1}`,
+              width,
+              height,
+              orientation
+            });
+          } else {
+            console.error(`Failed to get dimensions for ${url}:`, result.reason);
+            // Optionally: add a placeholder or skip
+            // For now, we skip images that fail dimension loading
+          }
+        });
+        console.log(`Successfully got dimensions for ${loadedImages.length} images.`);
+        setImages(loadedImages);
+
+      } catch (err: unknown) {
+        // This catch might be less likely if Promise.allSettled is used
+        console.error('Error in fetchAllDimensions:', err)
+        const message = err instanceof Error ? err.message : 'Failed to process image dimensions';
+        setError(message)
+      } finally {
+        // setLoadingDimensions(false) // REMOVE USAGE
+      }
+    }
+
+    fetchAllDimensions();
+  }, [imageUrls]) // Re-run if imageUrls change
+
+  // Show main loading indicator only while fetching URLs or if dimensions haven't started
+  if (loadingUrls || (imageUrls.length > 0 && images.length === 0 && !error)) {
     return (
       <div className="w-full text-center py-20">
         <p className="text-gray-400">Loading gallery...</p>
@@ -49,7 +106,7 @@ export default function ImageGallery() {
     )
   }
 
-  if (error) {
+  if (error && images.length === 0) { // Show error only if we couldn't load any images
     return (
       <div className="w-full text-center py-20">
         <p className="text-red-400">{error}</p>
@@ -57,25 +114,41 @@ export default function ImageGallery() {
     )
   }
 
+  // Render placeholders if URLs are loaded but dimensions are still fetching
+  const renderPlaceholders = imageUrls.length > 0 && images.length === 0 && !error;
+
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {imageUrls.map((url, index) => {
-          // We don't know orientation here yet, GalleryImage will handle its aspect ratio
-          return (
-            <div
-              key={url} // Use URL as key since it's unique
-              // Remove dynamic row-span for now, can be added back inside GalleryImage if needed
-              className={`col-span-1 overflow-hidden rounded-lg`}
-            >
-              {/* Pass loading prop here */}
-              <GalleryImage 
-                src={url} 
-                alt={`Gallery image ${index + 1}`} 
-                loading={index < 8 ? "eager" : "lazy"} // Load first 8 eagerly
-              />
-            </div>
-          )
+        {(renderPlaceholders ? imageUrls : images).map((item, index) => {
+          if (renderPlaceholders) {
+            // Render simple placeholder divs
+            return (
+              <div
+                key={item as string} // item is URL string here
+                className="col-span-1 aspect-video bg-gray-800 rounded-lg animate-pulse"
+                style={{ minHeight: '150px' }}
+              ></div>
+            );
+          } else {
+            // Render actual GalleryImage component with data
+            const image = item as GalleryImageData;
+            return (
+              <div
+                key={image.id}
+                // Apply row-span based on orientation
+                className={`${image.orientation === "portrait" ? "sm:row-span-2" : "col-span-1"} overflow-hidden rounded-lg`}
+              >
+                <GalleryImage
+                  src={image.src}
+                  alt={image.alt}
+                  width={image.width}   // Pass width
+                  height={image.height} // Pass height
+                  loading={index < 8 ? "eager" : "lazy"} // Apply lazy/eager loading
+                />
+              </div>
+            )
+          }
         })}
       </div>
     </div>
