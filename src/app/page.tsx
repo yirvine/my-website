@@ -236,6 +236,9 @@ export default function Portfolio() {
                 <Link href="/webcam" className="block hover:text-white transition-colors">
                   → political content
                 </Link>
+                <p>
+                  stay tuned! more stuff to come...
+                </p>
               </div>
             </section>
 
