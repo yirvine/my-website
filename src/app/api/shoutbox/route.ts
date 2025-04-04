@@ -1,12 +1,8 @@
-import { NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
+import { NextRequest, NextResponse } from 'next/server';
 
-// Initialize Redis client from environment variables
-// Vercel automatically injects these when the Upstash integration is added
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+// Use Redis.fromEnv() as recommended by Vercel
+const redis = Redis.fromEnv();
 
 // Define the structure of a message
 interface Message {
@@ -19,24 +15,34 @@ interface Message {
 const MESSAGES_KEY = 'shoutbox_messages'; // Key for storing the list in Redis
 const MAX_MESSAGES = 50; // Keep the latest 50 messages in Redis
 
-// GET handler to fetch messages
-export async function GET() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const GET = async (req: NextRequest) => {
   try {
-    // Fetch the entire list of messages (stored as strings)
-    // LRANGE messages 0 -1 fetches all elements
-    const messageStrings = await redis.lrange(MESSAGES_KEY, 0, -1);
+    console.log("GET /api/shoutbox called"); // Log entry
 
-    // Parse the message strings back into objects
-    const messages: Message[] = messageStrings.map((msgStr) => JSON.parse(msgStr));
+    // Fetch data. The Upstash client with fromEnv() likely returns objects already.
+    const messages: Message[] = await redis.lrange(MESSAGES_KEY, 0, MAX_MESSAGES - 1);
+    console.log("Raw/Parsed messages from Redis:", messages);
 
-    // Return the messages (the frontend will slice to show only 5)
-    return NextResponse.json(messages);
+    // No need to parse manually, the client seems to handle it.
+    // const messages: Message[] = messageStrings.reduce((acc: Message[], msgStr) => {
+    //   try {
+    //     acc.push(JSON.parse(msgStr));
+    //   } catch (parseError) {
+    //     console.error(`Failed to parse message string: ${msgStr}`, parseError); 
+    //     // Skip this message if it fails to parse
+    //   }
+    //   return acc;
+    // }, []);
 
+    console.log(`Returning ${messages.length} messages.`);
+
+    return NextResponse.json({ messages });
   } catch (error) {
-    console.error("Error fetching messages from Redis:", error);
-    return NextResponse.json({ error: "Failed to fetch messages" }, { status: 500 });
+    console.error("Error fetching messages:", error); // Log detailed error
+    return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
   }
-}
+};
 
 // POST handler to add a new message
 export async function POST(request: Request) {
@@ -44,31 +50,36 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { username, message } = body;
 
-    // Basic validation
     if (!username || typeof username !== 'string' || !message || typeof message !== 'string') {
       return NextResponse.json({ error: "Invalid input: username and message are required" }, { status: 400 });
     }
 
-    // Create new message object
     const newMessage: Message = {
-      id: Date.now(), // Use timestamp as a unique ID
-      username: username.trim().slice(0, 50), // Trim and limit length
-      message: message.trim().slice(0, 280), // Trim and limit length
+      id: Date.now(),
+      username: username.trim().slice(0, 50),
+      message: message.trim().slice(0, 280),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
     };
 
-    // Add the new message (as a string) to the end of the list
-    await redis.rpush(MESSAGES_KEY, JSON.stringify(newMessage));
+    // Explicitly stringify the object
+    const messageString = JSON.stringify(newMessage);
+
+    // Log exactly what is being sent to Redis
+    console.log(`Attempting rpush with key '${MESSAGES_KEY}', value type: ${typeof messageString}, value: ${messageString}`);
+
+    // Add the stringified message to the end of the list
+    const pushResult = await redis.rpush(MESSAGES_KEY, messageString);
+    console.log(`rpush result (new list length): ${pushResult}`);
 
     // Trim the list to keep only the latest MAX_MESSAGES
-    // LTRIM messages -50 -1 keeps elements from index -50 (50th from end) to -1 (last)
-    await redis.ltrim(MESSAGES_KEY, -MAX_MESSAGES, -1);
+    const trimResult = await redis.ltrim(MESSAGES_KEY, -MAX_MESSAGES, -1);
+    console.log(`ltrim result: ${trimResult}`);
 
-    // Return the newly created message (frontend expects this)
-    return NextResponse.json(newMessage, { status: 201 }); // 201 Created status
+    return NextResponse.json(newMessage, { status: 201 });
 
-  } catch (error) {
-    console.error("Error posting message to Redis:", error);
-    return NextResponse.json({ error: "Failed to post message" }, { status: 500 });
+  } catch (error: unknown) {
+    console.error("Error posting message to Redis:", error); // Log the actual error
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ error: "Failed to post message", details: errorMessage }, { status: 500 });
   }
 } 

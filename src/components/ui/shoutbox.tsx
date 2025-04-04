@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -18,49 +18,47 @@ export function Shoutbox() {
   const [message, setMessage] = useState("")
   const [isLoading, setIsLoading] = useState(true)
 
-  // Load messages from API on component mount and set up polling
-  useEffect(() => {
-    // Define fetch function *inside* the effect
-    const fetchMessages = async () => {
-      // Keep isLoading logic only for the very first load?
-      // setIsLoading(true); // Removed setIsLoading(true) here to prevent flicker on poll
-      try {
-        const response = await fetch("/api/shoutbox")
-        if (!response.ok) {
-          console.error("Poll failed:", response.status);
-          return; // Exit without updating state on failed poll
-        }
-        const data = await response.json()
-        // Ensure data is an array before slicing
-        setMessages(Array.isArray(data) ? data.slice(-5) : []); 
-      } catch (error) {
-        console.error("Failed to fetch messages:", error)
-      } finally {
-        // Ensure loading is false after the *initial* load attempt
-        // Check if state is still true before setting to false
-        setIsLoading(currentLoadingState => currentLoadingState ? false : currentLoadingState);
+  // Define fetch function outside useEffect, wrapped in useCallback
+  const fetchMessages = useCallback(async () => {
+    // Only set loading for the very first fetch if needed, otherwise skip.
+    // We might want to remove setIsLoading entirely from here if it causes flicker on manual refresh.
+    // setIsLoading(true); 
+    try {
+      const response = await fetch("/api/shoutbox")
+      if (!response.ok) {
+        console.error("Fetch failed:", response.status);
+        return; // Exit without updating state on failed fetch
       }
-    };
+      const data = await response.json()
+      // Extract the 'messages' array from the response object
+      setMessages(Array.isArray(data.messages) ? data.messages.slice(-15) : []);
+    } catch (error) {
+      console.error("Failed to fetch messages:", error)
+    } finally {
+      // Ensure loading is false after the *initial* load attempt
+      setIsLoading(currentLoadingState => currentLoadingState ? false : currentLoadingState);
+    }
+  }, [setMessages, setIsLoading]); // Dependency array for useCallback
 
+  // Load messages initially and set up polling
+  useEffect(() => {
     // Fetch initially
     fetchMessages();
 
-    // Set up polling interval (e.g., every 10 seconds)
-    const intervalId = setInterval(fetchMessages, 10000); // 10000 ms = 10 seconds
+    // Set up polling interval (e.g., every 30 seconds)
+    const intervalId = setInterval(fetchMessages, 30000); // 30000 ms = 30 seconds
 
     // Cleanup function to clear the interval when the component unmounts
     return () => clearInterval(intervalId);
-  }, []); // Empty dependency array is now correct because fetchMessages is defined inside
+  }, [fetchMessages]); // fetchMessages is now a dependency
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!username.trim() || !message.trim()) return
 
-    // Disable button while submitting? (Optional UX improvement)
     const currentUsername = username.trim();
     const currentMessage = message.trim();
 
-    // Clear input field immediately for better UX
     setMessage("")
 
     try {
@@ -77,18 +75,12 @@ export function Shoutbox() {
 
       if (!response.ok) throw new Error("Failed to post message")
 
-      // Trigger a fetch manually AFTER successful post
-      // We need to call the fetch defined inside the effect, which isn't directly accessible here.
-      // A simple way is to slightly restructure or use a ref/state to trigger a fetch.
-      // Let's simplify: Assume the poll will catch it soon enough or handle differently.
-      // For now, we remove the manual fetch from here as it's complex to call the effect's internal function.
-      // The next poll interval (max 10s) will show the new message.
-      // fetchMessages(); // Cannot call the effect's internal fetchMessages here easily
+      // Fetch messages immediately after successful post
+      fetchMessages(); 
 
     } catch (error) {
       console.error("Failed to post message:", error)
       setMessage(currentMessage); // Restore message on error
-      // Optionally show an error message to the user
     }
   }
 
