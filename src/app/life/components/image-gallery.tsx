@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import GalleryImage from "./gallery-image"
-import { processImageCollection } from "../utils/image-helpers"
 
 // Generate placeholder images with deterministic dimensions
 const generatePlaceholderImages = (count: number): GalleryImage[] => {
@@ -32,53 +31,46 @@ interface GalleryImage {
   orientation?: "landscape" | "portrait"
 }
 
+interface GalleryImageProps {
+  src: string
+  alt: string
+}
+
 export default function ImageGallery() {
-  const [images, setImages] = useState<GalleryImage[]>([])
+  const [imageUrls, setImageUrls] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    async function loadGalleryImages() {
+    async function loadGalleryUrls() {
       try {
         setError(null)
+        setLoading(true) // Ensure loading is true at the start
         
-        // Fetch list of images from our API
+        // Fetch list of image URLs from our API
         const response = await fetch('/api/gallery')
+        if (!response.ok) {
+          throw new Error('Failed to fetch gallery URLs');
+        }
         const data = await response.json()
-        
-        // Process the images to get their dimensions and orientation
-        const processedImages = await processImageCollection(data.images)
-        
-        // Transform ProcessedImage to GalleryImage
-        const galleryImages: GalleryImage[] = processedImages.map((img, index) => ({
-          id: index,
-          src: img.url,
-          alt: `Gallery image ${index + 1}`,
-          width: img.width,
-          height: img.height,
-          orientation: img.orientation
-        }))
-        
-        setImages(galleryImages)
-      } catch (err) {
-        console.error('Error loading gallery:', err)
-        setError('Failed to load gallery images')
+
+        // Assuming the API returns { images: ['/gallery/img1.jpg', ...] }
+        if (data && Array.isArray(data.images)) {
+          setImageUrls(data.images)
+        } else {
+          throw new Error('Invalid image data format from API');
+        }
+
+      } catch (err: any) { // Type error explicitly
+        console.error('Error loading gallery URLs:', err)
+        setError(err.message || 'Failed to load gallery images')
       } finally {
         setLoading(false)
       }
     }
 
-    loadGalleryImages()
+    loadGalleryUrls()
   }, [])
-
-  const loadMorePlaceholders = () => {
-    const currentLength = images.length
-    const newImages = generatePlaceholderImages(6).map(img => ({
-      ...img,
-      id: img.id + currentLength
-    }))
-    setImages(prev => [...prev, ...newImages])
-  }
 
   if (loading) {
     return (
@@ -99,26 +91,23 @@ export default function ImageGallery() {
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {images.map((image) => {
-          const orientation = image.orientation || (image.width > image.height ? "landscape" : "portrait")
+        {imageUrls.map((url, index) => {
+          // We don't know orientation here yet, GalleryImage will handle its aspect ratio
           return (
             <div
-              key={image.id}
-              className={`${orientation === "portrait" ? "row-span-2" : "col-span-1"} overflow-hidden rounded-lg`}
+              key={url} // Use URL as key since it's unique
+              // Remove dynamic row-span for now, can be added back inside GalleryImage if needed
+              className={`col-span-1 overflow-hidden rounded-lg`}
             >
-              <GalleryImage src={image.src} alt={image.alt} width={image.width} height={image.height} />
+              {/* Pass loading prop here */}
+              <GalleryImage 
+                src={url} 
+                alt={`Gallery image ${index + 1}`} 
+                loading={index < 8 ? "eager" : "lazy"} // Load first 8 eagerly
+              />
             </div>
           )
         })}
-      </div>
-
-      <div className="flex justify-center mt-8">
-        <button
-          className="px-6 py-2 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors"
-          onClick={loadMorePlaceholders}
-        >
-          Load More
-        </button>
       </div>
     </div>
   )

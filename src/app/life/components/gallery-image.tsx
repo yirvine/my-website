@@ -2,20 +2,39 @@
 
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
+import { getImageDimensions } from "../utils/image-helpers"
 
 interface GalleryImageProps {
   src: string
   alt: string
-  width: number
-  height: number
+  loading?: "eager" | "lazy"
 }
 
-export default function GalleryImage({ src, alt, width, height }: GalleryImageProps) {
-  const [isVisible, setIsVisible] = useState(false)
+export default function GalleryImage({ src, alt, loading = "lazy" }: GalleryImageProps) {
+  const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [isImageLoaded, setIsImageLoaded] = useState(false)
   const imageRef = useRef<HTMLDivElement>(null)
+  const [isVisible, setIsVisible] = useState(false)
 
-  // Determine orientation based on dimensions
-  const orientation = width > height ? "landscape" : "portrait"
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchDimensions() {
+      try {
+        const dims = await getImageDimensions(src);
+        if (isMounted) {
+          setDimensions(dims);
+        }
+      } catch (err) {
+        console.error(`Error fetching dimensions for ${src}:`, err);
+        if (isMounted) {
+          setError("Could not load image dimensions");
+        }
+      }
+    }
+    fetchDimensions();
+    return () => { isMounted = false; };
+  }, [src])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -43,26 +62,34 @@ export default function GalleryImage({ src, alt, width, height }: GalleryImagePr
     }
   }, [])
 
+  const orientation = dimensions ? (dimensions.width > dimensions.height ? "landscape" : "portrait") : null;
+  const aspectRatio = orientation === "portrait" ? "aspect-[3/4]" : "aspect-[4/3]";
+
   return (
     <div
       ref={imageRef}
-      className={`w-full h-full overflow-hidden bg-gray-100 ${
-        orientation === "portrait" ? "aspect-[3/4]" : "aspect-[4/3]"
-      }`}
+      className={`w-full h-auto overflow-hidden bg-gray-900 rounded-lg relative transition-opacity duration-700 ease-in-out ${
+        isVisible ? "opacity-100" : "opacity-0"
+      } ${dimensions ? aspectRatio : 'aspect-video'}`}
+      style={{ minHeight: '150px' }}
     >
-      <div
-        className={`transition-opacity duration-700 ease-in-out ${
-          isVisible ? "opacity-100" : "opacity-0"
-        } h-full w-full relative`}
-      >
+      {error && <div className="absolute inset-0 flex items-center justify-center text-red-400 text-xs p-2">Error</div>}
+      {!error && dimensions && (
         <Image
-          src={src || "/placeholder.svg"}
+          src={src}
           alt={alt}
-          fill
+          width={dimensions.width}
+          height={dimensions.height}
+          loading={loading}
+          className={`object-cover transition-opacity duration-500 ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
+          onLoad={() => setIsImageLoaded(true)}
+          onError={() => setError("Failed to load image")}
           sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          className="object-cover hover:scale-105 transition-transform duration-500"
         />
-      </div>
+      )}
+      {!error && !dimensions && (
+         <div className="absolute inset-0 bg-gray-800 animate-pulse"></div>
+      )}
     </div>
   )
 }

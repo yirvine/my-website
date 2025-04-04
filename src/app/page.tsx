@@ -6,7 +6,7 @@ import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Shoutbox } from "@/components/ui/shoutbox"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function Portfolio() {
   const allProjects = [
@@ -41,17 +41,43 @@ export default function Portfolio() {
       link: "https://github.com/yirvine/my-website"
     }
   ]
+  const [galleryImageUrls, setGalleryImageUrls] = useState<string[]>([]);
 
+  // Fetch gallery image URLs on mount
   useEffect(() => {
+    const fetchGalleryImages = async () => {
+      try {
+        const response = await fetch('/api/gallery');
+        if (!response.ok) {
+          throw new Error('Failed to fetch gallery images');
+        }
+        const data = await response.json();
+        // Assuming the API returns { images: ['/gallery/img1.jpg', ...] }
+        if (data && Array.isArray(data.images)) {
+          setGalleryImageUrls(data.images);
+        }
+      } catch (error) {
+        console.error("Error fetching gallery images for preload:", error);
+      }
+    };
+    fetchGalleryImages();
+  }, []);
+
+  // Preload gallery images once URLs are fetched
+  useEffect(() => {
+    if (galleryImageUrls.length === 0) return;
+
     const preloadImages = (imageUrls: string[]) => {
+      console.log(`Preloading ${imageUrls.length} images...`);
       imageUrls.forEach((url: string) => {
+        // Use window.Image for browser's native image object
         const img = new window.Image();
         img.src = url;
       });
     };
 
-    preloadImages(['/path/to/image1.jpg', '/path/to/image2.jpg']);
-  }, []);
+    preloadImages(galleryImageUrls);
+  }, [galleryImageUrls]); // Run this effect when galleryImageUrls changes
 
   return (
     <div className="min-h-screen bg-black text-white p-6">
