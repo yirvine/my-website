@@ -45,8 +45,8 @@ export function Shoutbox() {
     // Fetch initially
     fetchMessages();
 
-    // Set up polling interval (e.g., every 30 seconds)
-    const intervalId = setInterval(fetchMessages, 30000); // 30000 ms = 30 seconds
+    // Set up polling interval (e.g., every 15 minutes)
+    const intervalId = setInterval(fetchMessages, 900000); // 900000 ms = 15 minutes
 
     // Cleanup function to clear the interval when the component unmounts
     return () => clearInterval(intervalId);

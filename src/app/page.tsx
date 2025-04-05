@@ -104,25 +104,19 @@ export default function Portfolio() {
           <div className="space-y-6">
             <p className="text-gray-50 text-lg leading-relaxed text-justify">
             I&apos;m a software engineer who builds projects that mix what I&apos;m 
-            learning with what I&apos;m into — both technically and creatively.</p>
+            learning with what I&apos;m into.</p>
 
-            <p className="text-justify text-gray-200"> I originally graduated from Dalhousie University with a Chemical Engineering 
-              degree and worked as a controls engineer, where I was exposed to 
-              software development through building backend programs and scripting 
-              for industrial automation systems. That experience sparked an 
-              interest in development, leading me to complete a Master&apos;s in Software
-              Engineering at the University of Calgary — and pivot into 
-              a full-time career in software engineering.
+            <p className="text-justify text-gray-200"> After graduating from Dalhousie University with a Chemical Engineering degree, 
+              I worked as a controls engineer, building backend tools and automation scripts for industrial systems, primarily in the 
+              bioscience and pharmaceutical space. That experience sparked an interest in development, which eventually led me to 
+              complete a Master&apos;s in Software Engineering at the University of Calgary — and step into a more focused career in software engineering.
             </p>
-            <p className="text-justify text-gray-200"> I&apos;m especially passionate about AI, system design, and working with APIs. 
-              I love building things that are both technically interesting and creatively 
-              fulfilling. As much as I enjoy working on independent projects
-               (like most projects on my GitHub), I&apos;m also a social person by nature and
-                like bouncing ideas around and building things with others.
+            <p className="text-justify text-gray-200"> AI, system design, and working with APIs especially interest me. Having worked 
+              as a chemical engineer, particularly in the pharmaceutical space, I also maintain a strong interest in software projects that intersect with that field.
             </p>
             <p className="text-justify text-gray-200">
-              Outside of work, I&apos;m into music. I play piano, guitar, and produce electronic stuff. 
-              I&apos;m also into running, soccer, and traveling when I get the chance.    
+            Outside of work, I&apos;m big into music — I play piano and guitar, frequent live shows, and sometimes produce 
+            electronic tracks for fun. I also like to run, play soccer, and travel when I can. 
             </p>
             {/* <Button variant="outline" className="rounded-full">
               Meet the team
@@ -237,7 +231,7 @@ export default function Portfolio() {
                   → political content
                 </Link>
                 <p>
-                  stay tuned! more stuff to come...
+                  more stuff to come... stay tuned...
                 </p>
               </div>
             </section>
