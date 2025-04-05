@@ -22,12 +22,12 @@ export default function Portfolio() {
     },
     {
       title: "XAI Image Classifier",
-      description: "A deep learning model using CNNs and Integrated Gradients to visualize AI decision-making in image classification.",
+      description: "Seeing through AI’s eyes: A CNN-based model with Integrated Gradients to visualize a model's 'thinking' process in classifying satellite images",
       link: "https://github.com/yirvine/XAI-in-image-classification#readme"
     },
     {
-      title: "Pop Music Trend Analysis",
-      description: "A PySpark-based exploration of Spotify audio data from top global artists. This project analyzes trends and builds models to predict a song's popularity based on its musical features.",
+      title: "Predicting Song Popularity with Machine Learning",
+      description: "What makes a song popular? This PySpark-powered project analyzes audio features from top global artists using Spotify’s Web API — and applies various ML models to predict a track’s popularity.",
       link: "https://github.com/yirvine/Pop-Music-Trend-Analysis#readme"
     },
     {
