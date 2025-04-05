@@ -239,9 +239,9 @@ export default function Portfolio() {
             {/* Shoutbox Section */}
             <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-3">
               <h2 className="text-2xl font-mono mb-1.5">Say hi</h2>
-              <Button variant="ghost" size="icon" className="absolute right-2 top-2">
+              {/* <Button variant="ghost" size="icon" className="absolute right-2 top-2">
                 <span className="sr-only">Shoutbox</span>→
-              </Button>
+              </Button> */}
               <Shoutbox />
             </section>
           </div>
