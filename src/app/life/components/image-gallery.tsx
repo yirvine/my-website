@@ -119,14 +119,14 @@ export default function ImageGallery() {
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
         {(renderPlaceholders ? imageUrls : images).map((item, index) => {
           if (renderPlaceholders) {
-            // Render simple placeholder divs
+            // Render simple placeholder divs - add break-inside-avoid
             return (
               <div
                 key={item as string} // item is URL string here
-                className="col-span-1 aspect-video bg-gray-800 rounded-lg animate-pulse"
+                className="aspect-video bg-gray-800 rounded-lg animate-pulse break-inside-avoid" // Added break-inside-avoid
                 style={{ minHeight: '150px' }}
               ></div>
             );
@@ -134,10 +134,10 @@ export default function ImageGallery() {
             // Render actual GalleryImage component with data
             const image = item as GalleryImageData;
             return (
+              // Remove row-span logic, add break-inside-avoid
               <div
                 key={image.id}
-                // Apply row-span based on orientation
-                className={`${image.orientation === "portrait" ? "sm:row-span-2" : "col-span-1"} overflow-hidden rounded-lg`}
+                className="overflow-hidden rounded-lg break-inside-avoid" // Removed conditional class, added break-inside-avoid
               >
                 <GalleryImage
                   src={image.src}
