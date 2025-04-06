@@ -10,6 +10,7 @@ const sourceDir = '/Users/yeneirvine/Dropbox/TWIST/yen exports post frequency';
 const targetDir = path.join(__dirname, '../../public/audio/demos'); // Go up one more level
 const jsonOutputFile = path.join(__dirname, '../../public/demos.json'); // Go up one more level
 const maxDemos = 50; // How many of the latest demos to include
+// const maxSizeInBytes = 45 * 1024 * 1024; // REMOVED SIZE LIMIT
 // --- End Configuration ---
 
 async function syncDemos() {
@@ -31,35 +32,40 @@ async function syncDemos() {
         process.exit(1); // Exit if source can't be read
     }
 
-    // Filter for MP3 files and get stats
-    const mp3Files = [];
+    // Filter for MP3 files and get stats (Reverted structure)
+    const mp3Files: { name: string; mtime: Date; sourcePath: string }[] = []; // Reverted type
+
     for (const file of allFiles) {
       if (path.extname(file).toLowerCase() === '.mp3') {
         const sourceFilePath = path.join(sourceDir, file);
         try {
+            // Just get basic stats for mtime
             const stats = await fs.stat(sourceFilePath);
             if (stats.isFile()) {
+                // REMOVED SIZE CHECK
                 mp3Files.push({
                     name: file,
-                    mtime: stats.mtime, // Modification time
+                    mtime: stats.mtime,
                     sourcePath: sourceFilePath,
+                    // No stats field needed now
                 });
             }
         } catch (statErr) {
              const error = statErr as Error;
              console.warn(`Could not get stats for ${sourceFilePath}: ${error.message}`);
-             // Optionally skip this file or handle error differently
         }
       }
     }
+    // Reverted log message
     console.log(`Found ${mp3Files.length} MP3 files in source directory.`);
 
     // Sort by modification time (newest first)
     mp3Files.sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
 
-    // Get the latest N demos
+    // Get the latest N demos (Now includes all sizes)
     const latestDemos = mp3Files.slice(0, maxDemos);
-    console.log(`Selected the latest ${latestDemos.length} demos.`);
+    // Reverted log message
+    console.log(`Selected the latest ${latestDemos.length} demos to sync.`);
 
     // --- Cleanup and Copy ---
     // Get list of existing files in target directory (for cleanup)
@@ -79,19 +85,22 @@ async function syncDemos() {
 
     // Find files in target dir that are *not* in the latest list
     for (const existingFile of existingTargetFiles) {
-        if (!latestDemoNames.has(existingFile) && path.extname(existingFile).toLowerCase() === '.mp3') {
+        // Reverted deletion logic (just checks if it's an mp3 not in latest N)
+        if (path.extname(existingFile).toLowerCase() === '.mp3' && !latestDemoNames.has(existingFile)) {
             filesToDelete.push(path.join(targetDir, existingFile));
         }
     }
 
     // Delete old files
     if (filesToDelete.length > 0) {
+        // Reverted log message
         console.log(`Deleting ${filesToDelete.length} old demos from target directory...`);
         await Promise.all(filesToDelete.map(file => fs.unlink(file).catch(err => {
              const error = err as Error;
              console.warn(`Failed to delete ${file}: ${error.message}`)
         })));
     } else {
+        // Reverted log message
         console.log("No old demos to delete from target directory.");
     }
 
@@ -115,7 +124,8 @@ async function syncDemos() {
     }
 
     // --- Generate JSON ---
-    console.log(`Writing demo data to ${jsonOutputFile}`);
+    // Reverted log message
+    console.log(`Writing demo data for ${demoDataForJson.length} files to ${jsonOutputFile}`);
     await fs.writeFile(jsonOutputFile, JSON.stringify(demoDataForJson, null, 2));
 
     console.log('Demo sync completed successfully!');

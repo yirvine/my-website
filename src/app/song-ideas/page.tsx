@@ -95,7 +95,7 @@ export default function SongIdeasPage() {
         </Link>
         {/* Apply mono font to heading */}
         <h1 className="text-4xl font-mono mb-6">song_ideas.mp3</h1>
-        <p className="text-gray-400 mb-8">straight from dropbox</p>
+        <p className="text-gray-400 mb-8">straight from dropbox, some rough, some refined</p>
 
         {/* Loading/Error/No Demos messages will inherit text-white */}
         {isLoading && <p>Loading latest demos...</p>}
