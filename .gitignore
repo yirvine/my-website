@@ -98,7 +98,7 @@ web_modules/
 .cache/
 build/
 public/build/
-
+dist/
 # Docusaurus cache and generated files
 .docusaurus
 
