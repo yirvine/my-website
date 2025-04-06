@@ -1,6 +1,7 @@
 'use client'; // Required for useEffect and useState
 
 import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link'; // Import Link for navigation
 
 // Define an interface for the demo data structure
 interface Demo {
@@ -65,7 +66,7 @@ export default function SongIdeasPage() {
         console.error("Error fetching or parsing demos.json:", err);
         // Check if the error message indicates a 404 or similar
         if (err.message.includes('404')) {
-             setError("Demo list not found. Try running the sync script first (e.g., 'npm run sync-demos' or 'node scripts/sync-demos.ts').");
+             setError("Demo list not found. Run 'npm run sync-demos' locally, then commit and push the results.");
         } else {
             setError(`An error occurred fetching demo data: ${err.message}`);
         }
@@ -85,45 +86,59 @@ export default function SongIdeasPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">straight from dropbox</h1>
+    // Apply the main site layout classes
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Add back link */}
+        <Link href="/" className="text-1xl font-mono mb-4 block hover:text-yellow-400 transition-colors duration-200">
+          &larr; back to home
+        </Link>
+        {/* Apply mono font to heading */}
+        <h1 className="text-4xl font-mono mb-6">song_ideas.mp3</h1>
+        <p className="text-gray-400 mb-8">straight from dropbox</p>
 
-      {isLoading && <p>Loading latest demos...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+        {/* Loading/Error/No Demos messages will inherit text-white */}
+        {isLoading && <p>Loading latest demos...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+        {!isLoading && !error && demos.length === 0 && (
+            <p>No demos found. Run <code className="bg-gray-700 px-1 py-0.5 rounded text-sm">npm run sync-demos</code> locally, then commit & push.</p>
+        )}
 
-      {!isLoading && !error && demos.length === 0 && (
-        <p>No demos found. Run the sync script to populate this page.</p>
-      )}
-
-      {!isLoading && !error && demos.length > 0 && (
-        <ul className="space-y-6">
-          {demos.map((demo) => (
-            <li key={demo.fileName} className="p-4 border rounded-lg shadow-sm bg-white dark:bg-gray-800 dark:border-gray-700">
-              <h2 className="text-xl font-semibold mb-2">{cleanFileName(demo.fileName)}</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-                Exported: {formatTimestamp(demo.timestamp)}
-              </p>
-              <div className="mb-3">
-                <audio
+        {!isLoading && !error && demos.length > 0 && (
+          // Keep the list structure, colors should work well on dark bg
+          <ul className="space-y-6">
+            {demos.map((demo) => (
+              // Use dark background explicitly for list items
+              <li key={demo.fileName} className="p-4 border border-gray-700 rounded-lg shadow-sm bg-gray-900"> {/* Adjusted background and border */}
+                {/* Make title mono */}
+                <h2 className="text-xl font-mono font-semibold mb-2">{cleanFileName(demo.fileName)}</h2>
+                 {/* Ensure timestamp has good contrast */}
+                <p className="text-sm text-gray-400 mb-3">
+                  Exported: {formatTimestamp(demo.timestamp)}
+                </p>
+                <div className="mb-3">
+                  <audio
                     controls
                     src={demo.relativePath}
                     onPlay={handlePlay}
                     className="w-full"
-                 >
-                  Your browser does not support the audio element.
-                </audio>
-              </div>
-              <a
-                href={demo.relativePath}
-                download={demo.fileName}
-                className="text-blue-600 hover:underline dark:text-blue-400"
-              >
-                Download MP3
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
+                  >
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+                 {/* Link color should be fine */}
+                <a
+                  href={demo.relativePath}
+                  download={demo.fileName}
+                  className="text-blue-400 hover:underline font-mono text-sm" // Added font-mono and text-sm for consistency
+                >
+                  download mp3
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 } 
