@@ -86,7 +86,7 @@ export default function SongIdeasPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Song Ideas (WIP)</h1>
+      <h1 className="text-3xl font-bold mb-6">straight from dropbox</h1>
 
       {isLoading && <p>Loading latest demos...</p>}
       {error && <p className="text-red-500">{error}</p>}

@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "sync-demos": "tsc scripts/sync-demos.ts --target es2020 --module NodeNext --moduleResolution NodeNext --outDir dist/scripts --esModuleInterop --resolveJsonModule --skipLibCheck && node --enable-source-maps dist/scripts/sync-demos.js",
-    "prebuild": "npm run sync-demos"
+    "sync-demos": "tsc scripts/sync-demos.ts --target es2020 --module NodeNext --moduleResolution NodeNext --outDir dist/scripts --esModuleInterop --resolveJsonModule --skipLibCheck && node --enable-source-maps dist/scripts/sync-demos.js"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.2",
