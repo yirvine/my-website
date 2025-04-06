@@ -114,7 +114,7 @@ export default function SongIdeasPage() {
                 <h2 className="text-xl font-mono font-semibold mb-2">{cleanFileName(demo.fileName)}</h2>
                  {/* Ensure timestamp has good contrast */}
                 <p className="text-sm text-gray-400 mb-3">
-                  Exported: {formatTimestamp(demo.timestamp)}
+                  exported {formatTimestamp(demo.timestamp)}
                 </p>
                 <div className="mb-3">
                   <audio
