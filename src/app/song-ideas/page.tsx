@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link'; // Import Link for navigation
 import { FixedSizeList as List } from 'react-window'; // Import react-window
-import { Play, Pause, Volume2, VolumeX } from 'lucide-react'; // Import icons for play/pause and volume
+import { Play, Pause, Volume2, VolumeX, SkipForward, Rewind } from 'lucide-react'; // Import icons for play/pause and volume, and skip/rewind
 import { Button } from "@/components/ui/button"; // Assuming you have Button component
 
 // Define an interface for the demo data structure
@@ -53,41 +53,46 @@ const formatTime = (time: number) => {
 };
 
 // --- React Window Row Component ---
-// This component renders a single item in the virtualized list.
 const Row = ({ index, style, data }: { index: number; style: React.CSSProperties; data: { demos: Demo[]; handlePlayClick: (index: number) => void; currentPlayingIndex: number | null; isPlaying: boolean } }) => {
     const { demos, handlePlayClick, currentPlayingIndex, isPlaying } = data;
     const demo = demos[index];
     const isActive = index === currentPlayingIndex;
 
-    // Important: Apply the style prop provided by react-window
-    // It contains positioning information (top, left, width, height).
     return (
         <div style={style}>
-            {/* Use padding within the row div instead of on the outer li */}
-            <div className={`p-4 border rounded-lg shadow-sm h-full flex flex-col justify-between ${isActive ? 'border-yellow-400 bg-gray-800' : 'border-gray-700 bg-gray-900'}`}> {/* Highlight active */}
-                <div> {/* Content container */}
+            <div className={`p-4 pb-4 border rounded-lg shadow-sm h-full flex flex-col ${isActive ? 'border-yellow-400 bg-gray-800' : 'border-gray-700 bg-gray-900'}`}>
+                {/* Top section: Title and Timestamp */}
+                <div>
                     <h2 className="text-xl font-mono font-semibold mb-2 truncate" title={cleanFileName(demo.fileName)}>
                         {cleanFileName(demo.fileName)}
                     </h2>
-                    <p className="text-sm text-gray-400 mb-3">
+                     {/* Reduced margin-bottom */}
+                    <p className="text-sm text-gray-400 mb-2">
                         exported {formatTimestamp(demo.timestamp)}
                     </p>
+                 </div>
+
+                 {/* Controls section: Removed mt-2 */}
+                <div className="flex items-center gap-3">
                     {/* Play/Pause Button */}
                     <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handlePlayClick(index)}
-                        className="mb-3 text-white hover:bg-gray-700"
+                        className="text-white hover:bg-gray-700 p-1.5"
                     >
                         {isActive && isPlaying ? <Pause className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
-                        {isActive && isPlaying ? 'Pause' : 'Play'}
+                         {/* Added span for styling */}
+                        <span className="lowercase font-mono">
+                             {isActive && isPlaying ? 'Pause' : 'Play'}
+                        </span>
                     </Button>
-                </div>
-                <div> {/* Download link container */}
+
+                    {/* Download Link */}
                     <a
                         href={demo.relativePath}
                         download={demo.fileName}
-                        className="text-blue-400 hover:underline font-mono text-sm mt-auto" // Ensure link stays at bottom if needed
+                        className="text-blue-400 hover:underline font-mono text-sm p-1.5"
                     >
                         download mp3
                     </a>
@@ -226,8 +231,57 @@ export default function SongIdeasPage() {
     // Keep handlePlayClick dependency as the effect uses it
   }, [currentPlayingIndex, demos, handlePlayClick]);
 
-  // Estimated height per item - adjust this based on visual inspection!
-  const itemSize = 110; // Recalculate based on new layout (likely shorter without player)
+  // Adjusted item size again
+  const itemSize = 120;
+
+  const handleSeek = (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (!audioRef.current) return;
+      const newTime = parseFloat(event.target.value);
+      audioRef.current.currentTime = newTime;
+      setCurrentTime(newTime);
+  };
+
+  const handleVolume = (event: React.ChangeEvent<HTMLInputElement>) => {
+       if (!audioRef.current) return;
+       const newVolume = parseFloat(event.target.value);
+       audioRef.current.volume = newVolume;
+       setVolume(newVolume);
+       if (newVolume > 0 && audioRef.current.muted) {
+           audioRef.current.muted = false;
+           setIsMuted(false);
+       }
+  };
+
+  const toggleMute = () => {
+       if (!audioRef.current) return;
+       const currentlyMuted = !audioRef.current.muted;
+       audioRef.current.muted = currentlyMuted;
+       setIsMuted(currentlyMuted);
+       if (!currentlyMuted && audioRef.current.volume === 0) {
+            audioRef.current.volume = 0.5;
+       }
+  };
+
+  const togglePlayPause = () => {
+       if (!audioRef.current || currentPlayingIndex === null) return;
+       if (isPlaying) {
+           audioRef.current.pause();
+       } else {
+           audioRef.current.play().catch(e => console.error("Error toggling play:", e));
+       }
+  };
+
+  const handleRestart = () => {
+      if (audioRef.current) {
+          audioRef.current.currentTime = 0;
+      }
+  };
+
+  const handleSkipNext = () => {
+      if (currentPlayingIndex === null || demos.length === 0) return;
+      const nextIndex = (currentPlayingIndex + 1) % demos.length;
+      handlePlayClick(nextIndex);
+  };
 
   return (
     // Apply the main site layout classes
@@ -282,16 +336,18 @@ export default function SongIdeasPage() {
 
       {/* --- Enhanced Bottom Player Bar --- */}
       {currentPlayingIndex !== null && demos[currentPlayingIndex] && (
-          <div className="fixed bottom-0 left-0 right-0 bg-gray-900 p-3 border-t border-gray-700 z-50 flex items-center gap-4 text-sm">
+          <div className="fixed bottom-0 left-0 right-0 bg-gray-900 p-3 border-t border-gray-700 z-50 flex items-center gap-3 text-sm">
+              {/* Restart Button */}
+              <Button variant="ghost" size="icon" onClick={handleRestart} title="Restart track" className="text-white hover:bg-gray-700">
+                  <Rewind className="h-5 w-5" />
+              </Button>
               {/* Play/Pause Button */}
-              <Button variant="ghost" size="icon" onClick={() => {
-                  if (isPlaying) {
-                      audioRef.current?.pause();
-                  } else {
-                      audioRef.current?.play().catch(e => console.error("Error toggling play:", e));
-                  }
-              }} className="text-white hover:bg-gray-700">
+              <Button variant="ghost" size="icon" onClick={togglePlayPause} className="text-white hover:bg-gray-700">
                   {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+              </Button>
+              {/* Next Button */}
+              <Button variant="ghost" size="icon" onClick={handleSkipNext} title="Next track" className="text-white hover:bg-gray-700">
+                  <SkipForward className="h-5 w-5" />
               </Button>
 
               {/* Current Time */}
@@ -303,14 +359,8 @@ export default function SongIdeasPage() {
                   min="0"
                   max={duration || 0}
                   value={currentTime}
-                  onChange={(e) => {
-                      if (audioRef.current) {
-                          const newTime = parseFloat(e.target.value);
-                          audioRef.current.currentTime = newTime;
-                          setCurrentTime(newTime); // Update state immediately for smoother UI
-                      }
-                  }}
-                  className="flex-grow h-1 bg-gray-700 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-yellow-400" // Basic styling, can be improved
+                  onChange={handleSeek}
+                  className="flex-grow h-1 bg-gray-700 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-yellow-400"
               />
 
               {/* Duration */}
@@ -318,17 +368,7 @@ export default function SongIdeasPage() {
 
               {/* Volume Control */}
               <div className="flex items-center gap-2">
-                   <Button variant="ghost" size="icon" onClick={() => {
-                       if (audioRef.current) {
-                           const currentlyMuted = !audioRef.current.muted;
-                           audioRef.current.muted = currentlyMuted;
-                           setIsMuted(currentlyMuted);
-                           // If unmuting and volume was 0, set a default volume
-                           if (!currentlyMuted && audioRef.current.volume === 0) {
-                                audioRef.current.volume = 0.5; // Or restore previous volume if stored
-                           }
-                       }
-                   }} className="text-white hover:bg-gray-700">
+                   <Button variant="ghost" size="icon" onClick={toggleMute} className="text-white hover:bg-gray-700">
                       {isMuted || volume === 0 ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
                    </Button>
                   <input
@@ -337,18 +377,7 @@ export default function SongIdeasPage() {
                       max="1"
                       step="0.01"
                       value={isMuted ? 0 : volume}
-                      onChange={(e) => {
-                          if (audioRef.current) {
-                              const newVolume = parseFloat(e.target.value);
-                              audioRef.current.volume = newVolume;
-                              setVolume(newVolume); // Update state
-                              // Unmute if volume is adjusted while muted
-                              if (newVolume > 0 && audioRef.current.muted) {
-                                  audioRef.current.muted = false;
-                                  setIsMuted(false);
-                              }
-                          }
-                      }}
+                      onChange={handleVolume}
                       className="w-20 h-1 bg-gray-700 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-yellow-400"
                   />
               </div>
