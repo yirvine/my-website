@@ -85,6 +85,39 @@ export default function SongIdeasPage() {
     currentlyPlayingRef.current = currentAudio;
   };
 
+  // Function to handle when an audio player finishes
+  const handleEnded = (event: React.SyntheticEvent<HTMLAudioElement, Event>) => {
+      const finishedAudio = event.currentTarget;
+      const currentSrc = finishedAudio.currentSrc; // Get the full source URL
+
+      // Find the index of the track that just ended
+      const currentIndex = demos.findIndex(demo => currentSrc.endsWith(demo.relativePath));
+
+      if (currentIndex === -1 || demos.length <= 1) {
+          // Should not happen if src is correct, or only one demo
+          currentlyPlayingRef.current = null; // Reset playing ref
+          return;
+      }
+
+      // Calculate the index of the next track, wrap around
+      const nextIndex = (currentIndex + 1) % demos.length;
+      const nextDemo = demos[nextIndex];
+
+      // Find the audio element for the next track using its ID
+      // We derive the ID from the filename - ensure it's unique and valid
+      const nextAudioId = `audio-${nextDemo.fileName}`;
+      const nextAudio = document.getElementById(nextAudioId) as HTMLAudioElement | null;
+
+      if (nextAudio) {
+          nextAudio.play(); // Play the next audio element
+          // The handlePlay function will automatically be called by the 'play' event
+          // and update currentlyPlayingRef.current
+      } else {
+          console.warn(`Could not find next audio element with ID: ${nextAudioId}`);
+          currentlyPlayingRef.current = null; // Reset if next element not found
+      }
+  };
+
   return (
     // Apply the main site layout classes
     <div className="min-h-screen bg-black text-white">
@@ -118,9 +151,12 @@ export default function SongIdeasPage() {
                 </p>
                 <div className="mb-3">
                   <audio
+                    id={`audio-${demo.fileName}`}
                     controls
+                    preload="metadata"
                     src={demo.relativePath}
                     onPlay={handlePlay}
+                    onEnded={handleEnded}
                     className="w-full"
                   >
                     Your browser does not support the audio element.

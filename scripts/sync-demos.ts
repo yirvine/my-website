@@ -9,7 +9,7 @@ const sourceDir = '/Users/yeneirvine/Dropbox/TWIST/yen exports post frequency';
 // const __dirname = path.dirname(__filename);
 const targetDir = path.join(__dirname, '../../public/audio/demos'); // Go up one more level
 const jsonOutputFile = path.join(__dirname, '../../public/demos.json'); // Go up one more level
-const maxDemos = 50; // How many of the latest demos to include
+const maxDemos = 100; // Increased limit to 100
 // const maxSizeInBytes = 45 * 1024 * 1024; // REMOVED SIZE LIMIT
 // --- End Configuration ---
 
@@ -32,22 +32,26 @@ async function syncDemos() {
         process.exit(1); // Exit if source can't be read
     }
 
-    // Filter for MP3 files and get stats (Reverted structure)
-    const mp3Files: { name: string; mtime: Date; sourcePath: string }[] = []; // Reverted type
+    // Filter for MP3 files and get stats
+    const mp3Files: { name: string; mtime: Date; sourcePath: string }[] = [];
 
     for (const file of allFiles) {
       if (path.extname(file).toLowerCase() === '.mp3') {
         const sourceFilePath = path.join(sourceDir, file);
         try {
-            // Just get basic stats for mtime
             const stats = await fs.stat(sourceFilePath);
             if (stats.isFile()) {
-                // REMOVED SIZE CHECK
+                // --- ADD 0-BYTE CHECK ---
+                if (stats.size === 0) {
+                    console.warn(`Skipping 0-byte file (likely Dropbox online-only): ${file}`);
+                    continue; // Skip this file
+                }
+                // --- END 0-BYTE CHECK ---
+
                 mp3Files.push({
                     name: file,
                     mtime: stats.mtime,
                     sourcePath: sourceFilePath,
-                    // No stats field needed now
                 });
             }
         } catch (statErr) {
@@ -56,16 +60,14 @@ async function syncDemos() {
         }
       }
     }
-    // Reverted log message
-    console.log(`Found ${mp3Files.length} MP3 files in source directory.`);
+    console.log(`Found ${mp3Files.length} non-empty MP3 files in source directory.`); // Updated log
 
     // Sort by modification time (newest first)
     mp3Files.sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
 
-    // Get the latest N demos (Now includes all sizes)
+    // Get the latest N demos
     const latestDemos = mp3Files.slice(0, maxDemos);
-    // Reverted log message
-    console.log(`Selected the latest ${latestDemos.length} demos to sync.`);
+    console.log(`Selected the latest ${latestDemos.length} demos to sync (up to ${maxDemos}).`); // Updated log
 
     // --- Cleanup and Copy ---
     // Get list of existing files in target directory (for cleanup)
@@ -85,7 +87,8 @@ async function syncDemos() {
 
     // Find files in target dir that are *not* in the latest list
     for (const existingFile of existingTargetFiles) {
-        // Reverted deletion logic (just checks if it's an mp3 not in latest N)
+        // Delete MP3s that are not in the latest list OR are now 0-byte placeholders in the source
+        // (This logic implicitly handles removing previously copied 0-byte files as they won't be in latestDemos)
         if (path.extname(existingFile).toLowerCase() === '.mp3' && !latestDemoNames.has(existingFile)) {
             filesToDelete.push(path.join(targetDir, existingFile));
         }
@@ -93,15 +96,13 @@ async function syncDemos() {
 
     // Delete old files
     if (filesToDelete.length > 0) {
-        // Reverted log message
-        console.log(`Deleting ${filesToDelete.length} old demos from target directory...`);
+        console.log(`Deleting ${filesToDelete.length} old or now-empty demos from target directory...`); // Updated log
         await Promise.all(filesToDelete.map(file => fs.unlink(file).catch(err => {
              const error = err as Error;
              console.warn(`Failed to delete ${file}: ${error.message}`)
         })));
     } else {
-        // Reverted log message
-        console.log("No old demos to delete from target directory.");
+        console.log("No old or now-empty demos to delete from target directory."); // Updated log
     }
 
     // Copy latest N demos to target directory
@@ -124,7 +125,6 @@ async function syncDemos() {
     }
 
     // --- Generate JSON ---
-    // Reverted log message
     console.log(`Writing demo data for ${demoDataForJson.length} files to ${jsonOutputFile}`);
     await fs.writeFile(jsonOutputFile, JSON.stringify(demoDataForJson, null, 2));
 
