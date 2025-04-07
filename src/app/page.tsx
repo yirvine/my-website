@@ -219,7 +219,7 @@ export default function Portfolio() {
               <h2 className="text-2xl font-mono mb-1.5">Other stuff</h2>
               <div className="space-y-2 font-mono text-gray-400 text-base">
                 <Link href="/life" className="block hover:text-white transition-colors">
-                  → life.jpg
+                  → camera roll
                 </Link>
                 {/* <Link href="/music/listening" className="block hover:text-white transition-colors">
                   → songs i&apos;m currently into
