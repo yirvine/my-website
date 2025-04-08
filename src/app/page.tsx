@@ -22,12 +22,12 @@ export default function Portfolio() {
     },
     {
       title: "XAI Image Classifier",
-      description: "Seeing through AI’s eyes: A CNN-based model with Integrated Gradients to visualize a model's 'thinking' process in classifying satellite images",
+      description: "Seeing through AI's eyes: A CNN-based model with Integrated Gradients to visualize a model's 'thinking' process in classifying satellite images",
       link: "https://github.com/yirvine/XAI-in-image-classification#readme"
     },
     {
       title: "Predicting Song Popularity with Machine Learning",
-      description: "What makes a song popular? This PySpark-powered project analyzes audio features from top global artists using Spotify’s Web API — and applies various ML models to predict a track’s popularity.",
+      description: "What makes a song popular? This PySpark-powered project analyzes audio features from top global artists using Spotify's Web API — and applies various ML models to predict a track's popularity.",
       link: "https://github.com/yirvine/Pop-Music-Trend-Analysis#readme"
     },
     {
@@ -217,9 +217,12 @@ export default function Portfolio() {
             {/* Other Stuff Section */}
             <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-3">
               <h2 className="text-2xl font-mono mb-1.5">Other stuff</h2>
-              <div className="space-y-2 font-mono text-gray-400 text-base">
+              <div className="space-y-3 font-mono text-gray-200 text-base" style={{ fontSize: '1.1rem' }}>
                 <Link href="/life" className="block hover:text-white transition-colors">
                   → camera roll
+                </Link>
+                <Link href="/webcam" className="block hover:text-white transition-colors">
+                  → a cool webcam
                 </Link>
                 {/* <Link href="/music/listening" className="block hover:text-white transition-colors">
                   → songs i&apos;m currently into
@@ -227,7 +230,7 @@ export default function Portfolio() {
                 <Link href="/music/made" className="block hover:text-white transition-colors">
                   → music i made
                 </Link> */}
-                <Link href="/webcam" className="block hover:text-white transition-colors">
+                <Link href="/political-content" className="block hover:text-white transition-colors">
                   → political content
                 </Link>
                 <p>
