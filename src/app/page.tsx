@@ -231,7 +231,6 @@ export default function Portfolio() {
                   → political content
                 </Link>
                 <p>
-                  more stuff to come... stay tuned...
                 </p>
               </div>
             </section>
