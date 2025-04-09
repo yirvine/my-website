@@ -68,8 +68,8 @@ export default function ListeningPage() {
         <Link href="/" className="text-1xl font-mono mb-4 block hover:text-yellow-400 transition-colors duration-200">
           &larr; back to home
         </Link>
-        <h1 className="text-4xl font-mono mb-2">Listening Lately</h1>
-         <p className="text-gray-400 mb-8 text-sm">My top 10 tracks on Spotify (last 6 months or so)</p>
+        <h1 className="text-4xl font-mono mb-2">songs i&apos;ve been listening to lately</h1>
+         <p className="text-gray-400 mb-8 text-sm">my custom &apos;spotify wrapped&apos; of the last 6 months, via their web api</p>
 
         {isLoading && <p>Loading top tracks...</p>}
         {error && <p className="text-red-500">{error}</p>}
@@ -79,7 +79,7 @@ export default function ListeningPage() {
         )}
 
         {!isLoading && !error && tracks.length > 0 && (
-          <ol className="space-y-4 list-decimal list-inside font-mono">
+          <ol className="space-y-4 list-inside font-mono">
             {tracks.map((track, index) => (
               <li key={track.id} className="border-b border-gray-800 pb-4 last:border-b-0">
                 <a
@@ -88,7 +88,7 @@ export default function ListeningPage() {
                   rel="noopener noreferrer"
                   className="flex items-center gap-4 hover:bg-gray-800 p-2 rounded transition-colors duration-150"
                 >
-                  <span className="text-gray-500 w-6 text-right">{index + 1}.</span>
+                  <span className="text-white w-6 text-right">{index + 1}.</span>
                   {track.albumImageUrl ? (
                     <Image
                       src={track.albumImageUrl}

@@ -15,7 +15,7 @@ const refreshToken = process.env.SPOTIFY_REFRESH_TOKEN; // You will need to add 
 
 const jsonOutputFile = path.join(__dirname, '../../public/top-tracks.json'); // Note: __dirname points to dist/scripts after compilation
 const timeRange = 'medium_term'; // Options: short_term (~4 weeks), medium_term (~6 months), long_term (~years)
-const limit = 10; // Number of tracks to fetch
+const limit = 20; // Number of tracks to fetch
 
 // --- Add Types Back ---
 interface SpotifyImage {

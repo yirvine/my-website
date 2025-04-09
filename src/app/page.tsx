@@ -221,15 +221,12 @@ export default function Portfolio() {
                 <Link href="/life" className="block hover:text-white transition-colors">
                   → camera roll
                 </Link>
+                <Link href="/listening" className="block hover:text-white transition-colors">
+                  → songs i&apos;ve been listening to lately
+                </Link>
                 <Link href="/webcam" className="block hover:text-white transition-colors">
                   → a cool webcam
                 </Link>
-                {/* <Link href="/music/listening" className="block hover:text-white transition-colors">
-                  → songs i&apos;m currently into
-                </Link>
-                <Link href="/music/made" className="block hover:text-white transition-colors">
-                  → music i made
-                </Link> */}
                 <Link href="/political-content" className="block hover:text-white transition-colors">
                   → political content
                 </Link>

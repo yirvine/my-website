@@ -78,5 +78,85 @@
     "albumImageUrl": "https://i.scdn.co/image/ab67616d000048513126a95bb7ed4146a80c7fc6",
     "trackUrl": "https://open.spotify.com/track/79gWc6dZ1dXH7rC67DTunz",
     "popularity": 60
+  },
+  {
+    "id": "07aFPwkdNSvNZvPg8B4dHs",
+    "name": "Pretty Good",
+    "artists": "E.VAX",
+    "albumImageUrl": "https://i.scdn.co/image/ab67616d00004851000018eeb2fbe34ab01638ce",
+    "trackUrl": "https://open.spotify.com/track/07aFPwkdNSvNZvPg8B4dHs",
+    "popularity": 17
+  },
+  {
+    "id": "4abJ8EyNIQNM5JtaqBBuzl",
+    "name": "ROT IN PIECES",
+    "artists": "HERO",
+    "albumImageUrl": "https://i.scdn.co/image/ab67616d000048518388b8db1e6889a8dbeb344d",
+    "trackUrl": "https://open.spotify.com/track/4abJ8EyNIQNM5JtaqBBuzl",
+    "popularity": 29
+  },
+  {
+    "id": "3DIveHQ6lW0XQ0Q928VIlq",
+    "name": "Strolling Sloth",
+    "artists": "Arc De Soleil",
+    "albumImageUrl": "https://i.scdn.co/image/ab67616d00004851aaa0e265b3d9c073d08911d2",
+    "trackUrl": "https://open.spotify.com/track/3DIveHQ6lW0XQ0Q928VIlq",
+    "popularity": 57
+  },
+  {
+    "id": "1sWYVBg7ix2WAq43J9nY7E",
+    "name": "Are You Looking Up",
+    "artists": "Mk.gee",
+    "albumImageUrl": "https://i.scdn.co/image/ab67616d00004851173b8975e8a7820da5f1aeb6",
+    "trackUrl": "https://open.spotify.com/track/1sWYVBg7ix2WAq43J9nY7E",
+    "popularity": 66
+  },
+  {
+    "id": "2dttiopw15VwgGSaVa767m",
+    "name": "bag it out west",
+    "artists": "dj.friend",
+    "albumImageUrl": "https://i.scdn.co/image/ab67616d000048516ac2ed4f77d15368f5cc75c0",
+    "trackUrl": "https://open.spotify.com/track/2dttiopw15VwgGSaVa767m",
+    "popularity": 0
+  },
+  {
+    "id": "4Qil9aFPFjPxo4kUcL7Zym",
+    "name": "Lovebites",
+    "artists": "Ganzo",
+    "albumImageUrl": "https://i.scdn.co/image/ab67616d000048512c969025a8eaf55808190aeb",
+    "trackUrl": "https://open.spotify.com/track/4Qil9aFPFjPxo4kUcL7Zym",
+    "popularity": 17
+  },
+  {
+    "id": "6jkyOwh3fftTimmyvZCiUW",
+    "name": "Tide Pool",
+    "artists": "E.VAX",
+    "albumImageUrl": "https://i.scdn.co/image/ab67616d00004851dc09527efe8fd91a2b075018",
+    "trackUrl": "https://open.spotify.com/track/6jkyOwh3fftTimmyvZCiUW",
+    "popularity": 10
+  },
+  {
+    "id": "0NUqi0ps17YpLUC3kgsZq0",
+    "name": "DIE TRYING",
+    "artists": "PARTYNEXTDOOR, Drake, Yebba",
+    "albumImageUrl": "https://i.scdn.co/image/ab67616d00004851cc392813bfd8f63d4d5f4a95",
+    "trackUrl": "https://open.spotify.com/track/0NUqi0ps17YpLUC3kgsZq0",
+    "popularity": 89
+  },
+  {
+    "id": "19kHhX6f6EfLU7rcO3RqjO",
+    "name": "Back On 74",
+    "artists": "Jungle",
+    "albumImageUrl": "https://i.scdn.co/image/ab67616d0000485177619f14cb03e11baf5761d1",
+    "trackUrl": "https://open.spotify.com/track/19kHhX6f6EfLU7rcO3RqjO",
+    "popularity": 82
+  },
+  {
+    "id": "6v0I4vstyfyoHK2p35vHlS",
+    "name": "Just The Way You Are",
+    "artists": "Memphis LK",
+    "albumImageUrl": "https://i.scdn.co/image/ab67616d0000485144eda315069bae78c78a516a",
+    "trackUrl": "https://open.spotify.com/track/6v0I4vstyfyoHK2p35vHlS",
+    "popularity": 33
   }
 ]
