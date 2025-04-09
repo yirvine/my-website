@@ -10,7 +10,7 @@ const sourceDirs = [
 ];
 const targetDir = path.join(__dirname, '../../public/audio/demos');
 const jsonOutputFile = path.join(__dirname, '../../public/demos.json');
-const maxDemos = 80;
+const maxDemos = 5;
 // --- End Configuration ---
 
 async function syncDemos() {
