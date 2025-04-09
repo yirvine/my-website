@@ -398,16 +398,6 @@ export default function SongIdeasPage() {
       )}
       {/* --- End Bottom Player Bar --- */}
 
-      {/* Optional: Display current track info somewhere */}
-      {currentPlayingIndex !== null && demos[currentPlayingIndex] && (
-        <div className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] md:bottom-0 left-0 right-0 bg-gray-800 p-2 text-center z-40 border-t border-gray-700">
-           <p className="text-sm font-mono truncate">
-              Now Playing: {cleanFileName(demos[currentPlayingIndex].fileName)}
-           </p>
-           {/* Could add basic controls here linked to audioRef */}
-        </div>
-      )}
-
       {/* Hidden audio element for playback - THIS ONE STAYS */}
       <audio ref={audioRef} preload="metadata" className="hidden">
             Your browser doesn&apos;t support embedded audio.
