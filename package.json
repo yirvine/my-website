@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "sync-demos": "tsc scripts/sync-demos.ts --target es2020 --module NodeNext --moduleResolution NodeNext --outDir dist/scripts --esModuleInterop --resolveJsonModule --skipLibCheck && node --enable-source-maps dist/scripts/sync-demos.js"
+    "sync-demos": "tsc scripts/sync-demos.ts --target es2020 --module NodeNext --moduleResolution NodeNext --outDir dist/scripts --esModuleInterop --resolveJsonModule --skipLibCheck && node --enable-source-maps dist/scripts/sync-demos.js",
+    "sync-spotify": "tsc scripts/sync-spotify-top-tracks.ts --target es2020 --module NodeNext --moduleResolution NodeNext --outDir dist/scripts --esModuleInterop --resolveJsonModule --skipLibCheck --sourceMap && node --enable-source-maps dist/scripts/sync-spotify-top-tracks.js",
+    "prebuild": "npm run sync-demos && npm run sync-spotify"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.2",
