@@ -224,6 +224,9 @@ export default function Portfolio() {
                 <Link href="/listening" className="block hover:text-white transition-colors">
                   → songs i&apos;ve been listening to lately
                 </Link>
+                <Link href="/song-ideas" className="block hover:text-white transition-colors">
+                  → demo songs
+                </Link>
                 <Link href="/webcam" className="block hover:text-white transition-colors">
                   → a cool webcam
                 </Link>

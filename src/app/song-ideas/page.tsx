@@ -315,23 +315,8 @@ export default function SongIdeasPage() {
         </Link>
         {/* Apply mono font to heading */}
         <h1 className="text-4xl font-mono mb-6">song_ideas.mp3</h1>
-        <p className="text-gray-400 mb-8">synced from dropbox, some rough, some refined</p>
+        <p className="text-gray-400 mb-8">fun ideas from dropbox, some rough, some refined</p>
       </div>
-
-      {/* Single Audio Player (can be hidden or styled minimally) */}
-      {/* Ensure audio tag has controls for debugging, can be removed later */}
-      <audio ref={audioRef} controls preload="metadata" className="w-full fixed bottom-0 left-0 p-2 bg-gray-800 z-50 md:hidden">
-            Your browser doesn&apos;t support embedded audio. {/* Escaped apostrophe */}
-      </audio>
-      {/* Optional: Display current track info somewhere */}
-      {currentPlayingIndex !== null && demos[currentPlayingIndex] && (
-        <div className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] md:bottom-0 left-0 right-0 bg-gray-800 p-2 text-center z-40 border-t border-gray-700">
-           <p className="text-sm font-mono truncate">
-              Now Playing: {cleanFileName(demos[currentPlayingIndex].fileName)}
-           </p>
-           {/* Could add basic controls here linked to audioRef */}
-        </div>
-      )}
 
       {/* List container - takes remaining height */}
       <div ref={containerRef} className={`flex-grow max-w-7xl w-full mx-auto px-4 pb-8 ${currentPlayingIndex !== null ? 'pb-24 md:pb-16' : ''}`}> {/* Increased padding */}
@@ -413,7 +398,17 @@ export default function SongIdeasPage() {
       )}
       {/* --- End Bottom Player Bar --- */}
 
-      {/* Hidden audio element for playback */}
+      {/* Optional: Display current track info somewhere */}
+      {currentPlayingIndex !== null && demos[currentPlayingIndex] && (
+        <div className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] md:bottom-0 left-0 right-0 bg-gray-800 p-2 text-center z-40 border-t border-gray-700">
+           <p className="text-sm font-mono truncate">
+              Now Playing: {cleanFileName(demos[currentPlayingIndex].fileName)}
+           </p>
+           {/* Could add basic controls here linked to audioRef */}
+        </div>
+      )}
+
+      {/* Hidden audio element for playback - THIS ONE STAYS */}
       <audio ref={audioRef} preload="metadata" className="hidden">
             Your browser doesn&apos;t support embedded audio.
       </audio>
