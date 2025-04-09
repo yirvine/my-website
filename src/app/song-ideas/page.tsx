@@ -308,18 +308,25 @@ export default function SongIdeasPage() {
   return (
     // Apply the main site layout classes
     <div className="min-h-screen bg-black text-white flex flex-col">
+      {/* Container for top content + sticky header */}
       <div className="max-w-7xl w-full mx-auto px-4 pt-8">
-        {/* Add back link */}
-        <Link href="/" className="text-1xl font-mono mb-4 block hover:text-yellow-400 transition-colors duration-200">
-          &larr; back to home
-        </Link>
+        {/* --- Sticky Header Div --- */}
+        {/* Apply sticky, z-index, bg. Negative margins pull it edge-to-edge within padding, py adds vertical space */}
+        <div className="sticky top-0 z-20 bg-black py-3 -mt-8 -mx-4 px-4 mb-4">
+          {/* Keep existing link styles (font, hover, etc.) */}
+          <Link href="/" className="text-1xl font-mono block hover:text-yellow-400 transition-colors duration-200">
+            &larr; back to home
+          </Link>
+        </div>
+        {/* --- End Sticky Header Div --- */}
+        
         {/* Apply mono font to heading */}
         <h1 className="text-4xl font-mono mb-6">song_ideas.mp3</h1>
         <p className="text-gray-400 mb-8">fun ideas from dropbox, some rough, some refined</p>
       </div>
 
       {/* List container - takes remaining height */}
-      <div ref={containerRef} className={`flex-grow max-w-7xl w-full mx-auto px-4 pb-8 ${currentPlayingIndex !== null ? 'pb-24 md:pb-16' : ''}`}> {/* Increased padding */}
+      <div ref={containerRef} className={`flex-grow max-w-7xl w-full mx-auto px-4 ${currentPlayingIndex !== null ? 'pb-0' : ''}`}> {/* Removed base padding, only add pb-16 when player is active */}
         {/* Loading/Error/No Demos messages will inherit text-white */}
         {isLoading && <p>Loading latest demos...</p>}
         {error && <p className="text-red-500">{error}</p>}

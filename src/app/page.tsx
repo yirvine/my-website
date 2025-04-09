@@ -96,7 +96,7 @@ export default function Portfolio() {
             />
             <div>
               <h1 className="text-2xl font-mono">YENE IRVINE</h1>
-              <p className="text-gray-400">some things I built</p>
+              <p className="text-gray-400">some things I made</p>
             </div>
           </div>
 
@@ -124,30 +124,13 @@ export default function Portfolio() {
           </div>
 
           {/* Social Links */}
+          {/* 
           <div className="space-y-4">
             <div className="flex gap-4">
-              <Button variant="ghost" size="icon" className="p-2" asChild>
-                <Link href="https://github.com/yirvine" target="_blank" rel="noopener noreferrer">
-                  <Image src="/github.svg" alt="GitHub" width={32} height={32} className="invert" />
-                </Link>
-              </Button>
-              <Button variant="ghost" size="icon" className="p-2" asChild>
-                <Link href="https://www.linkedin.com/in/yene-irvine/" target="_blank" rel="noopener noreferrer">
-                  <Image src="/linkedin.svg" alt="LinkedIn" width={32} height={32} className="invert" />
-                </Link>
-              </Button>
-              <Button variant="ghost" size="icon" className="p-2" asChild>
-                <Link href="https://www.researchgate.net/profile/Yene-Irvine" target="_blank" rel="noopener noreferrer">
-                  <Image src="/researchgate.svg" alt="ResearchGate" width={32} height={32} className="invert" />
-                </Link>
-              </Button>
-              <Button variant="ghost" size="icon" className="p-2" asChild>
-                <Link href="https://instagram.com/yeneirvine" target="_blank" rel="noopener noreferrer">
-                  <Image src="/instagram.svg" alt="Instagram" width={32} height={32} className="invert" />
-                </Link>
-              </Button>
+              ...
             </div>
-          </div>
+          </div> 
+          */}
         </div>
 
         {/* Right Content */}
@@ -214,31 +197,68 @@ export default function Portfolio() {
 
           {/* Other Stuff and Shoutbox Sections */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            {/* Other Stuff Section */}
-            <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-3">
-              <h2 className="text-2xl font-mono mb-1.5">Other stuff</h2>
-              <div className="space-y-3 font-mono text-gray-200 text-base" style={{ fontSize: '1.1rem' }}>
-                <Link href="/life" className="block hover:text-white transition-colors">
-                  → camera roll
-                </Link>
-                <Link href="/listening" className="block hover:text-white transition-colors">
-                  → songs i&apos;ve been listening to lately
-                </Link>
-                <Link href="/song-ideas" className="block hover:text-white transition-colors">
-                  → demo songs
-                </Link>
-                <Link href="/webcam" className="block hover:text-white transition-colors">
-                  → a cool webcam
-                </Link>
-                <Link href="/political-content" className="block hover:text-white transition-colors">
-                  → political content
-                </Link>
-                <p>
-                </p>
-              </div>
-            </section>
+            {/* Left Column: Container for stacked cards */}
+            <div className="flex flex-col gap-4">
+              {/* Other Stuff Section (Existing) */}
+              <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-3">
+                <h2 className="text-2xl font-mono mb-1.5">Other stuff</h2>
+                <div className="space-y-3 font-mono text-gray-200 text-base" style={{ fontSize: '1.1rem' }}>
+                  <Link href="/life" className="block hover:text-yellow-400 transition-colors">
+                    → camera roll
+                  </Link>
+                  <Link href="/listening" className="block hover:text-yellow-400 transition-colors">
+                    → songs i&apos;ve been listening to lately
+                  </Link>
+                  <Link href="/song-ideas" className="block hover:text-yellow-400 transition-colors">
+                    → demo songs
+                  </Link>
+                  <Link href="/webcam" className="block hover:text-yellow-400 transition-colors">
+                    → a cool webcam
+                  </Link>
+                  {/* Removed political content link for now, can be re-added if needed */}
+                </div>
+              </section>
 
-            {/* Shoutbox Section */}
+              {/* Contact Section (New) */}
+              <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-3 flex flex-col flex-grow">
+                <h2 className="text-2xl font-mono mb-3">Connect</h2>
+                <a 
+                  href="mailto:yeneirvine@gmail.com" 
+                  className="block font-mono text-gray-200 text-base hover:text-yellow-400 transition-colors mb-4"
+                  style={{ fontSize: '1.1rem' }}
+                >
+                  yeneirvine@gmail.com
+                </a>
+                
+                {/* Social Links - MOVED HERE */}
+                <div className="mt-auto pt-4">
+                  <div className="flex gap-4">
+                    <Button variant="ghost" size="icon" className="p-2 transition-opacity duration-150 hover:opacity-75" asChild>
+                      <Link href="https://github.com/yirvine" target="_blank" rel="noopener noreferrer">
+                        <Image src="/github.svg" alt="GitHub" width={32} height={32} className="invert" />
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" size="icon" className="p-2 transition-opacity duration-150 hover:opacity-75" asChild>
+                      <Link href="https://www.linkedin.com/in/yene-irvine/" target="_blank" rel="noopener noreferrer">
+                        <Image src="/linkedin.svg" alt="LinkedIn" width={32} height={32} className="invert" />
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" size="icon" className="p-2 transition-opacity duration-150 hover:opacity-75" asChild>
+                      <Link href="https://www.researchgate.net/profile/Yene-Irvine" target="_blank" rel="noopener noreferrer">
+                        <Image src="/researchgate.svg" alt="ResearchGate" width={32} height={32} className="invert" />
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" size="icon" className="p-2 transition-opacity duration-150 hover:opacity-75" asChild>
+                      <Link href="https://instagram.com/yeneirvine" target="_blank" rel="noopener noreferrer">
+                        <Image src="/instagram.svg" alt="Instagram" width={32} height={32} className="invert" />
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            {/* Right Column: Shoutbox Section (Unchanged) */}
             <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-3">
               <h2 className="text-2xl font-mono mb-1.5">Say hi</h2>
               <Shoutbox />
