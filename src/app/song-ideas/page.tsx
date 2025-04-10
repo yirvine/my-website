@@ -322,7 +322,7 @@ export default function SongIdeasPage() {
         
         {/* Apply mono font to heading */}
         <h1 className="text-4xl font-mono mb-6">song_ideas.mp3</h1>
-        <p className="text-gray-400 mb-8">fun ideas from dropbox, some rough, some refined</p>
+        <p className="text-gray-400 mb-8">song ideas synced from my dropbox, some rough, some refined</p>
       </div>
 
       {/* List container - takes remaining height */}
