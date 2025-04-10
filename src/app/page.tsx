@@ -114,7 +114,7 @@ export default function Portfolio() {
               as a chemical engineer in the pharma space, I also maintain a strong interest in software projects that intersect with that field.
             </p>
             <p className="text-justify text-gray-200">
-            Outside of software, I&apos;m big into music — I play piano and guitar, frequent live shows, and sometimes produce 
+            Outside of software, I&apos;m big into music — I play piano and guitar, enjoy attending live shows, and sometimes produce 
             electronic tracks. I also like to run, play soccer, and travel when I can. 
             </p>
             {/* <Button variant="outline" className="rounded-full">
