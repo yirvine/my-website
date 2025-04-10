@@ -106,31 +106,43 @@ export default function Portfolio() {
             I&apos;m a software engineer who builds projects that mix what I&apos;m 
             learning with what I&apos;m into.</p>
 
-            <p className="text-justify text-gray-200"> After graduating from Dalhousie University with a Chemical Engineering degree, 
-              I worked as a controls engineer, building backend tools and automation scripts for industrial systems, primarily in the 
-              bioscience and pharmaceutical space. That experience sparked an interest in development, which eventually led me to 
-              complete a Master&apos;s in Software Engineering at the University of Calgary — and step into a more focused career in software engineering.
+            <p className="text-justify text-gray-200"> I started my career as a controls engineer, building backend tools and automation scripts for industrial systems, mainly in the 
+              pharmaceutical space. That experience sparked an interest in development, which led me to 
+              complete a Master&apos;s in Software Engineering at University of Calgary — and continue my career fully focused in software engineering.
             </p>
             <p className="text-justify text-gray-200"> AI, system design, and working with APIs especially interest me. Having worked 
-              as a chemical engineer, particularly in the pharmaceutical space, I also maintain a strong interest in software projects that intersect with that field.
+              as a chemical engineer in the pharma space, I also maintain a strong interest in software projects that intersect with that field.
             </p>
             <p className="text-justify text-gray-200">
-            Outside of work, I&apos;m big into music — I play piano and guitar, frequent live shows, and sometimes produce 
-            electronic tracks for fun. I also like to run, play soccer, and travel when I can. 
+            Outside of software, I&apos;m big into music — I play piano and guitar, frequent live shows, and sometimes produce 
+            electronic tracks. I also like to run, play soccer, and travel when I can. 
             </p>
             {/* <Button variant="outline" className="rounded-full">
               Meet the team
             </Button> */}
           </div>
 
-          {/* Social Links */}
-          {/* 
-          <div className="space-y-4">
-            <div className="flex gap-4">
-              ...
+          {/* Tech Stack Section (Moved Here) */}
+
+          {/* Other Stuff (Moved to Sidebar) */}
+          <div className="space-y-2">
+            <h3 className="text-xl font-mono text-yellow-400 mb-3">Other stuff</h3>
+            {/* Content from the 'Other stuff' card */} 
+            <div className="space-y-1 font-mono text-gray-200 text-base"> 
+              <Link href="/life" className="block hover:text-yellow-400 transition-colors">
+                → camera roll
+              </Link>
+              <Link href="/listening" className="block hover:text-yellow-400 transition-colors">
+                → recent listening via spotify API
+              </Link>
+              <Link href="/song-ideas" className="block hover:text-yellow-400 transition-colors">
+                → demo songs
+              </Link>
+              <Link href="/webcam" className="block hover:text-yellow-400 transition-colors">
+                → a cool webcam
+              </Link>
             </div>
-          </div> 
-          */}
+          </div>
         </div>
 
         {/* Right Content */}
@@ -180,18 +192,18 @@ export default function Portfolio() {
             </Carousel>
           </section>
 
-          {/* Stack Section */}
-          <section className="bg-blue-800 rounded-xl p-4 max-h-[70px]">
+          {/* Stack Section -> Resume Section */}
+          <section className="bg-blue-800 rounded-xl px-4 py-3">
             <Link 
               href="/CV-2025.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="flex justify-between items-center hover:opacity-80 transition-opacity"
             >
-              <h2 className="text-2xl font-mono">Download my CV</h2>
-              <Button variant="ghost" size="icon" className="text-white">
+              <h2 className="text-2xl font-mono">Download my resume</h2>
+              {/* <Button variant="ghost" size="icon" className="text-white">
                 <span className="sr-only">Download CV</span>→
-              </Button>
+              </Button> */}
             </Link>
           </section>
 
@@ -199,27 +211,21 @@ export default function Portfolio() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             {/* Left Column: Container for stacked cards */}
             <div className="flex flex-col gap-4">
-              {/* Other Stuff Section (Existing) */}
+              {/* Tech Stack (Moved to Card) */}
               <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-3">
-                <h2 className="text-2xl font-mono mb-1.5">Other stuff</h2>
-                <div className="space-y-3 font-mono text-gray-200 text-base" style={{ fontSize: '1.1rem' }}>
-                  <Link href="/life" className="block hover:text-yellow-400 transition-colors">
-                    → camera roll
-                  </Link>
-                  <Link href="/listening" className="block hover:text-yellow-400 transition-colors">
-                    → songs i&apos;ve been listening to lately
-                  </Link>
-                  <Link href="/song-ideas" className="block hover:text-yellow-400 transition-colors">
-                    → demo songs
-                  </Link>
-                  <Link href="/webcam" className="block hover:text-yellow-400 transition-colors">
-                    → a cool webcam
-                  </Link>
-                  {/* Removed political content link for now, can be re-added if needed */}
+                <h2 className="text-2xl font-mono mb-1.5">Tech Stack</h2> {/* Title changed */} 
+                {/* Content from the 'Tech Stack' sidebar section */} 
+                <div className="space-y-2 text-gray-300 text-sm"> 
+                  <p><span className="font-mono text-gray-100">Languages:</span> Python, JavaScript, TypeScript, SQL, Java</p>
+                <p><span className="font-mono text-gray-100">Frontend:</span>React, Next.js, React Native, Tailwind CSS, HTML                  </p>
+                  <p><span className="font-mono text-gray-100">Backend:</span> Node.js, FastAPI, Flask, REST APIs</p>
+                  <p><span className="font-mono text-gray-100">Databases:</span> PostgreSQL, Snowflake, Firebase, Redis, DB2</p>
+                  <p><span className="font-mono text-gray-100">Data & ML:</span> PyTorch, Scikit-learn, Matplotlib, Pandas, Numpy, Spark</p>
+                  <p><span className="font-mono text-gray-100">Cloud/DevOps:</span> AWS, Azure, Docker, Git, Vercel</p>
                 </div>
               </section>
 
-              {/* Contact Section (New) */}
+              {/* Contact Section (Existing - should remain at bottom) */}
               <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-3 flex flex-col flex-grow">
                 <h2 className="text-2xl font-mono mb-3">Connect</h2>
                 <a 
