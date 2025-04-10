@@ -5,7 +5,7 @@ This is the source code for my personal portfolio website, built with [Next.js](
 It showcases my software projects and includes dynamic features like:
 *   Recent Spotify listening activity (synced via Spotify Web API)
 *   A player for personal music demos (synced from local folders)
-*   A shoutbox for visitor messages (using Vercel KV)
+*   A shoutbox for visitor messages (using Vercel KV — serverless Redis, powered by Upstash)
 *   An image gallery
 
 ## Tech Stack
