@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { Menu } from "lucide-react"
+import { Menu, ChevronDown, ChevronUp, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Shoutbox } from "@/components/ui/shoutbox"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
@@ -102,15 +102,28 @@ export default function Portfolio() {
           </div>
 
           {/* Bio */}
-          <div className="space-y-4">
+          <div>
             <p className="text-gray-50 text-lg leading-relaxed text-justify">
             I&apos;m a software engineer who builds projects that mix what I&apos;m 
-            learning with what I&apos;m into.
-            </p>
+            learning with what I&apos;m into.</p>
 
-            {/* Collapsible Section */}
+            {/* Toggle Button - Moved up, added margin */}
+            <Button 
+              variant="outline"
+              onClick={() => setIsBioExpanded(!isBioExpanded)}
+              className="rounded-full mt-3 inline-flex items-center"
+            >
+              {isBioExpanded ? 'Less about me' : 'More about me'}
+              {isBioExpanded ? (
+                <ChevronUp className="ml-2 h-4 w-4" />
+              ) : (
+                <ChevronDown className="ml-2 h-4 w-4" />
+              )}
+            </Button>
+
+            {/* Collapsible Section - Added margin */}
             <div 
-              className={`overflow-hidden transition-[max-height] duration-500 ease-in-out ${isBioExpanded ? 'max-h-[500px]' : 'max-h-0'}`}
+              className={`mt-4 overflow-hidden transition-[max-height] duration-500 ease-in-out ${isBioExpanded ? 'max-h-[500px]' : 'max-h-0'}`}
             >
               {/* Content to collapse/expand */}
               <div className="space-y-4 pt-1">
@@ -127,15 +140,6 @@ export default function Portfolio() {
                 </p>
               </div>
             </div>
-
-            {/* Toggle Button */}
-            <Button 
-              variant="outline"
-              onClick={() => setIsBioExpanded(!isBioExpanded)}
-              className="rounded-full"
-            >
-              {isBioExpanded ? 'Less about me' : 'More about me'}
-            </Button>
           </div>
 
           {/* Tech Stack Section (Moved Here) */}
@@ -148,14 +152,15 @@ export default function Portfolio() {
               <Link href="/life" className="block hover:text-yellow-400 transition-colors">
                 → camera roll
               </Link>
-              <Link href="/listening" className="block hover:text-yellow-400 transition-colors">
-                → recent listening via spotify API
-              </Link>
+
               <Link href="/song-ideas" className="block hover:text-yellow-400 transition-colors">
                 → demo songs
               </Link>
               <Link href="/webcam" className="block hover:text-yellow-400 transition-colors">
                 → a cool webcam
+              </Link>
+              <Link href="/listening" className="block hover:text-yellow-400 transition-colors">
+                → recent listening via Spotify&apos;s web API
               </Link>
             </div>
           </div>
@@ -246,9 +251,10 @@ export default function Portfolio() {
                 <h2 className="text-2xl font-mono mb-3">Connect</h2>
                 <a 
                   href="mailto:yeneirvine@gmail.com" 
-                  className="block font-mono text-gray-200 text-base hover:text-yellow-400 transition-colors mb-4"
+                  className="inline-flex items-center font-mono text-gray-200 text-base hover:text-yellow-400 transition-colors mb-4"
                   style={{ fontSize: '1.1rem' }}
                 >
+                  <Mail className="mr-2 h-4 w-4" />
                   yeneirvine@gmail.com
                 </a>
                 
