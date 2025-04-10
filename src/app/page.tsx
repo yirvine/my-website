@@ -9,6 +9,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { useEffect, useState } from 'react'
 
 export default function Portfolio() {
+  const [isBioExpanded, setIsBioExpanded] = useState(false);
   const allProjects = [
     {
       title: "RunIt",
@@ -83,7 +84,7 @@ export default function Portfolio() {
     <div className="min-h-screen bg-black text-white p-6">
       <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-8">
         {/* Left Sidebar */}
-        <div className="space-y-8">
+        <div className="space-y-4">
           {/* Profile Header */}
           <div className="flex items-center gap-4">
             <Image
@@ -101,25 +102,40 @@ export default function Portfolio() {
           </div>
 
           {/* Bio */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             <p className="text-gray-50 text-lg leading-relaxed text-justify">
             I&apos;m a software engineer who builds projects that mix what I&apos;m 
-            learning with what I&apos;m into.</p>
+            learning with what I&apos;m into.
+            </p>
 
-            <p className="text-justify text-gray-200"> I started my career as a controls engineer, building backend tools and automation scripts for industrial systems, mainly in the 
-              pharmaceutical space. That experience sparked an interest in development, which led me to 
-              complete a Master&apos;s in Software Engineering at University of Calgary — and continue my career fully focused in software engineering.
-            </p>
-            <p className="text-justify text-gray-200"> AI, system design, and working with APIs especially interest me. Having worked 
-              as a chemical engineer in the pharma space, I also maintain a strong interest in software projects that intersect with that field.
-            </p>
-            <p className="text-justify text-gray-200">
-            Outside of software, I&apos;m big into music — I play piano and guitar, enjoy attending live shows, and sometimes produce 
-            electronic tracks. I also like to run, play soccer, and travel when I can. 
-            </p>
-            {/* <Button variant="outline" className="rounded-full">
-              Meet the team
-            </Button> */}
+            {/* Collapsible Section */}
+            <div 
+              className={`overflow-hidden transition-[max-height] duration-500 ease-in-out ${isBioExpanded ? 'max-h-[500px]' : 'max-h-0'}`}
+            >
+              {/* Content to collapse/expand */}
+              <div className="space-y-4 pt-1">
+                <p className="text-justify text-gray-200"> I started my career as a controls engineer, building backend tools and automation scripts for industrial systems, mainly in the 
+                  pharmaceutical space. That experience sparked an interest in development, which led me to 
+                  complete a Master&apos;s in Software Engineering at University of Calgary — and continue my career fully focused in software engineering.
+                </p>
+                <p className="text-justify text-gray-200"> AI, system design, and working with APIs especially interest me. Having worked 
+                  as a chemical engineer in the pharma space, I also maintain a strong interest in software projects that intersect with that field.
+                </p>
+                <p className="text-justify text-gray-200">
+                Outside of software, I&apos;m big into music — I play piano and guitar, enjoy attending live shows, and sometimes produce 
+                electronic tracks. I also like to run, play soccer, and travel when I can. 
+                </p>
+              </div>
+            </div>
+
+            {/* Toggle Button */}
+            <Button 
+              variant="outline"
+              onClick={() => setIsBioExpanded(!isBioExpanded)}
+              className="rounded-full"
+            >
+              {isBioExpanded ? 'Less about me' : 'More about me'}
+            </Button>
           </div>
 
           {/* Tech Stack Section (Moved Here) */}
