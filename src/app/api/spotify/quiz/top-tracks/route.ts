@@ -23,6 +23,7 @@ interface SpotifyTrackItem {
   name: string;
   artists: SpotifyArtist[];
   album: SpotifyAlbum;
+  external_urls: { spotify: string; };
   // Add other fields like popularity, preview_url if needed
 }
 
@@ -88,6 +89,7 @@ export async function GET(request: NextRequest) {
       name: item.name,
       artists: item.artists.map((artist: SpotifyArtist) => artist.name).join(', '),
       albumImageUrl: item.album.images?.[0]?.url,
+      spotifyUrl: item.external_urls?.spotify,
     }));
 
     return NextResponse.json({ tracks });
