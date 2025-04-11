@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link'; // Import Link for navigation
 import { FixedSizeList as List } from 'react-window'; // Import react-window
-import { Play, Pause, Volume2, VolumeX, SkipForward, Rewind } from 'lucide-react'; // Import icons for play/pause and volume, and skip/rewind
+import { Play, Pause, Volume2, VolumeX, SkipForward, Rewind, Undo2, Redo2 } from 'lucide-react'; // Import icons for play/pause and volume, and skip/rewind
 import { Button } from "@/components/ui/button"; // Assuming you have Button component
 
 // Define an interface for the demo data structure
@@ -12,6 +12,9 @@ interface Demo {
   relativePath: string;
   timestamp: string; // ISO string format
 }
+
+// --- Control Flag --- 
+const ENABLE_DOWNLOADS = false; // Set to true to re-enable downloads
 
 // Helper function to format the timestamp (optional, but nice)
 function formatTimestamp(isoString: string): string {
@@ -53,8 +56,8 @@ const formatTime = (time: number) => {
 };
 
 // --- React Window Row Component ---
-const Row = ({ index, style, data }: { index: number; style: React.CSSProperties; data: { demos: Demo[]; handlePlayClick: (index: number) => void; currentPlayingIndex: number | null; isPlaying: boolean } }) => {
-    const { demos, handlePlayClick, currentPlayingIndex, isPlaying } = data;
+const Row = ({ index, style, data }: { index: number; style: React.CSSProperties; data: { demos: Demo[]; handlePlayClick: (index: number) => void; currentPlayingIndex: number | null; isPlaying: boolean; enableDownloads: boolean } }) => {
+    const { demos, handlePlayClick, currentPlayingIndex, isPlaying, enableDownloads } = data;
     const demo = demos[index];
     const isActive = index === currentPlayingIndex;
 
@@ -88,14 +91,16 @@ const Row = ({ index, style, data }: { index: number; style: React.CSSProperties
                         </span>
                     </Button>
 
-                    {/* Download Link */}
-                    <a
-                        href={demo.relativePath}
-                        download={demo.fileName}
-                        className="text-blue-400 hover:underline font-mono text-sm p-1.5"
-                    >
-                        download mp3
-                    </a>
+                    {/* Conditionally render the Download Link based on the flag */}
+                    {enableDownloads && (
+                         <a
+                            href={demo.relativePath}
+                            download={demo.fileName}
+                            className="text-blue-400 hover:underline font-mono text-sm p-1.5"
+                         >
+                            download mp3
+                         </a>
+                    )}
                 </div>
             </div>
         </div>
@@ -188,55 +193,68 @@ export default function SongIdeasPage() {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const handleAudioPlay = () => setIsPlaying(true);
+    // --- Event Handlers --- 
+    const handleAudioPlay = () => {
+      setIsPlaying(true);
+      // *** Preload next track logic ***
+      if (demos.length > 1 && currentPlayingIndex !== null) {
+        const nextIndex = (currentPlayingIndex + 1) % demos.length;
+        const nextDemo = demos[nextIndex];
+        if (nextDemo) {
+          console.log(`[Player] Play started for index ${currentPlayingIndex}. Preloading next track (index ${nextIndex}): ${nextDemo.fileName}`);
+          const preloader = new Audio();
+          preloader.src = nextDemo.relativePath;
+          preloader.load(); // Hint browser to start loading
+          // No need to attach or play the preloader
+        }
+      }
+    };
     const handleAudioPause = () => setIsPlaying(false);
     const handleAudioEnded = () => { // Autoplay next logic
         if (currentPlayingIndex === null || demos.length <= 1) return;
         const nextIndex = (currentPlayingIndex + 1) % demos.length;
-        handlePlayClick(nextIndex); // Use the same function to play next
+        handlePlayClick(nextIndex); 
     };
-    // Listeners for UI updates
     const handleLoadedMetadata = () => setDuration(audio.duration);
-
-    // Throttled time update handler
+    
+    // Restore throttled time update handler
     const handleTimeUpdate = () => {
-        // If a timeout is already scheduled, do nothing
-        if (timeUpdateThrottleRef.current) {
-            return;
-        }
-        // Schedule an update
-        timeUpdateThrottleRef.current = setTimeout(() => {
-            if (audioRef.current) { // Check if audio still exists
-               setCurrentTime(audioRef.current.currentTime);
-            }
-            timeUpdateThrottleRef.current = null; // Clear the throttle flag
-        }, 250); // Update roughly 4 times per second
+      if (timeUpdateThrottleRef.current) {
+          return;
+      }
+      timeUpdateThrottleRef.current = setTimeout(() => {
+          if (audioRef.current) {
+             setCurrentTime(audioRef.current.currentTime);
+          }
+          timeUpdateThrottleRef.current = null; 
+      }, 250); 
     };
-
+    
+    // Restore volume change handler
     const handleVolumeChange = () => {
-        // Check audio exists before accessing properties
-        if (audioRef.current) {
-            setVolume(audioRef.current.volume);
-            setIsMuted(audioRef.current.muted);
-        }
+      if (audioRef.current) {
+          setVolume(audioRef.current.volume);
+          setIsMuted(audioRef.current.muted);
+      }
     };
 
+    // --- Add Listeners --- 
     audio.addEventListener('play', handleAudioPlay);
     audio.addEventListener('pause', handleAudioPause);
     audio.addEventListener('ended', handleAudioEnded);
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-    audio.addEventListener('timeupdate', handleTimeUpdate); // Uses throttled handler
+    audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('volumechange', handleVolumeChange);
 
-    // Initial sync
+    // --- Initial Sync Logic (Restore) ---
     setVolume(audio.volume);
     setIsMuted(audio.muted);
-    if(!isNaN(audio.duration)) { // Sync duration/time if already loaded
+    if(!isNaN(audio.duration)) { 
         setDuration(audio.duration);
         setCurrentTime(audio.currentTime);
     }
 
-    // Cleanup listeners
+    // --- Cleanup Listeners --- 
     return () => {
       audio.removeEventListener('play', handleAudioPlay);
       audio.removeEventListener('pause', handleAudioPause);
@@ -244,14 +262,13 @@ export default function SongIdeasPage() {
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('volumechange', handleVolumeChange);
-      // Clear any pending throttle timeout on cleanup
+      // Restore timeout clearance
       if (timeUpdateThrottleRef.current) {
           clearTimeout(timeUpdateThrottleRef.current);
           timeUpdateThrottleRef.current = null;
       }
     };
-    // Keep handlePlayClick dependency as the effect uses it
-  }, [currentPlayingIndex, demos, handlePlayClick]);
+  }, [currentPlayingIndex, demos, handlePlayClick]); 
 
   // Adjusted item size again
   const itemSize = 120;
@@ -305,6 +322,22 @@ export default function SongIdeasPage() {
       handlePlayClick(nextIndex);
   };
 
+  // New Handler: Seek Backward 15 seconds
+  const handleSeekBackward = () => {
+    if (!audioRef.current) return;
+    const newTime = Math.max(0, audioRef.current.currentTime - 15);
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime); // Update UI immediately
+  };
+
+  // New Handler: Seek Forward 15 seconds
+  const handleSeekForward = () => {
+    if (!audioRef.current || isNaN(audioRef.current.duration)) return;
+    const newTime = Math.min(audioRef.current.duration, audioRef.current.currentTime + 15);
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime); // Update UI immediately
+  };
+
   return (
     // Apply the main site layout classes
     <div className="min-h-screen bg-black text-white flex flex-col">
@@ -340,7 +373,7 @@ export default function SongIdeasPage() {
             itemCount={demos.length}
             itemSize={itemSize} // Pass estimated item height
             width="100%" // Take full width of container
-            itemData={{ demos, handlePlayClick, currentPlayingIndex, isPlaying }} // Pass necessary data and handlers to Row
+            itemData={{ demos, handlePlayClick, currentPlayingIndex, isPlaying, enableDownloads: ENABLE_DOWNLOADS }} // Pass necessary data and handlers to Row
             overscanCount={5} // Render more items above/below viewport
           >
             {Row}
@@ -355,9 +388,17 @@ export default function SongIdeasPage() {
               <Button variant="ghost" size="icon" onClick={handleRestart} title="Restart track" className="text-white hover:bg-gray-700">
                   <Rewind className="h-5 w-5" />
               </Button>
+              {/* --- Rewind 15s Button --- */}
+              <Button variant="ghost" size="icon" onClick={handleSeekBackward} title="Rewind 15s" className="text-white hover:bg-gray-700">
+                  <Undo2 className="h-5 w-5" />
+              </Button>
               {/* Play/Pause Button */}
               <Button variant="ghost" size="icon" onClick={togglePlayPause} className="text-white hover:bg-gray-700">
                   {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+              </Button>
+              {/* --- Skip 15s Button --- */}
+              <Button variant="ghost" size="icon" onClick={handleSeekForward} title="Skip 15s" className="text-white hover:bg-gray-700">
+                  <Redo2 className="h-5 w-5" />
               </Button>
               {/* Next Button */}
               <Button variant="ghost" size="icon" onClick={handleSkipNext} title="Next track" className="text-white hover:bg-gray-700">
@@ -405,7 +446,7 @@ export default function SongIdeasPage() {
       )}
       {/* --- End Bottom Player Bar --- */}
 
-      {/* Hidden audio element for playback - THIS ONE STAYS */}
+      {/* Hidden audio element for playback - Keep preload="metadata" */}
       <audio ref={audioRef} preload="metadata" className="hidden">
             Your browser doesn&apos;t support embedded audio.
       </audio>
