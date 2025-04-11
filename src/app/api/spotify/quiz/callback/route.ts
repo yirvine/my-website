@@ -28,27 +28,18 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
-  const state = searchParams.get('state'); // Get state from URL (sent back by Spotify)
-  
-  // --- REMOVED State Cookie Check ---
-  // const cookieStore = await cookies(); 
-  // const storedState = cookieStore.get('spotify_auth_state_quiz')?.value;
-  // console.log('[Callback Route] Stored State from Cookie:', storedState);
-  // if (!state || state !== storedState) { ... }
-  
-  // Basic check: Ensure state parameter exists from Spotify redirect
+  const state = searchParams.get('state'); // Read state from URL again
+
+  // Check for state from Spotify
   if (!state) {
       console.error('State parameter missing from Spotify callback URL.');
-      // Redirect back to quiz page with an error
       return NextResponse.redirect(new URL('/quiz?error=Missing+State+From+Spotify', request.url));
   }
-
-  console.log('[Callback Route] State from URL:', state);
+  console.log('[Callback Route] State from URL:', state); // Log it
   
-  // If code is missing, handle error
+  // Check for code existence
   if (!code) {
     console.error('Authorization code missing from Spotify callback.');
-    // Include state in error redirect if needed for debugging, but typically not required
     return NextResponse.redirect(new URL('/quiz?error=Authorization+Failed', request.url));
   }
 
@@ -74,12 +65,12 @@ export async function GET(request: NextRequest) {
     const userName = meData.body.display_name || meData.body.id;
     console.log('[Callback Route] Successfully fetched user: ', userName);
 
-    // Redirect to quiz page with success, user, state, AND accessToken
+    // Redirect to quiz page with success, user, accessToken, AND state
     const redirectUrl = new URL('/quiz', request.url);
     redirectUrl.searchParams.set('success', 'true');
     redirectUrl.searchParams.set('user', userName);
-    redirectUrl.searchParams.set('state', state);
-    redirectUrl.searchParams.set('access_token', accessToken); // Pass token in URL
+    redirectUrl.searchParams.set('state', state); // Pass state back
+    redirectUrl.searchParams.set('access_token', accessToken); 
     const response = NextResponse.redirect(redirectUrl);
     
     // Optionally still set refresh token cookie if needed for future token refreshes

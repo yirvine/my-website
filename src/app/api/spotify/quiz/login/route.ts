@@ -26,8 +26,6 @@ export async function GET(request: NextRequest) {
 
   if (!state) {
       console.error('[Login Route] State parameter missing from request URL.');
-      // Redirect back to quiz page with an error? Or return JSON error?
-      // Redirecting might be better UX
       return NextResponse.redirect(new URL('/quiz?error=Missing+State', request.url));
   }
   
@@ -42,7 +40,6 @@ export async function GET(request: NextRequest) {
   const authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
   console.log('[Login Route] Generated Spotify Authorize URL:', authorizeURL);
 
-  // Simply redirect to Spotify - no need to set a cookie here anymore
   return NextResponse.redirect(authorizeURL);
 
   // --- REMOVED COOKIE SETTING LOGIC ---

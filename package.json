@@ -12,6 +12,7 @@
     "prebuild": "npm run sync-spotify"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.7",
     "@radix-ui/react-slot": "^1.1.2",
     "@upstash/redis": "^1.34.6",
     "class-variance-authority": "^0.7.1",
