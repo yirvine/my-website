@@ -55,7 +55,7 @@ export default function QuizClient() {
   // useSearchParams MUST be used within a Client Component
   const searchParams = useSearchParams(); 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const [/* user */, setUser] = useState<UserProfile | null>(null); // Comment out user state variable
   const [error, setError] = useState<string | null>(null);
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [topTracks, setTopTracks] = useState<Track[]>([]);
@@ -67,11 +67,86 @@ export default function QuizClient() {
   const [isQuizActive, setIsQuizActive] = useState(false);
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  // --- End Quiz State ---
+  const [quizCompleted, setQuizCompleted] = useState(false);
+  // --- NEW Feedback State ---
+  const [answerFeedback, setAnswerFeedback] = useState<{ chosenId: string; correctId: string; isCorrect: boolean } | null>(null);
+  const [isShowingFeedback, setIsShowingFeedback] = useState(false);
+  // --- End Feedback State ---
 
   // Ref to track if initial auth redirect has been processed
   const hasProcessedAuthRef = useRef(false);
 
+  // --- DEFINE QUIZ LOGIC FIRST --- 
+  // Wrap startQuiz in useCallback for stable identity
+  const startQuiz = useCallback((tracks: Track[]) => {
+    console.log("DEBUG: startQuiz function called.");
+    const shuffledTracks = shuffleArray([...tracks]);
+    const selectedTracks = shuffledTracks.slice(0, 10);
+    const questions: QuizQuestion[] = [];
+    for (let i = 0; i < 10; i += 2) {
+      questions.push({ trackA: selectedTracks[i], trackB: selectedTracks[i+1] });
+    }
+    setQuizQuestions(questions);
+    setCurrentQuestionIndex(0);
+    setIsQuizActive(true); 
+    setQuizCompleted(false); 
+    setTrackError(null); 
+  }, []); // Empty dependency array - relies only on passed argument
+
+  const endQuiz = () => {
+    // Reset feedback state when ending quiz
+    setIsShowingFeedback(false);
+    setAnswerFeedback(null);
+    console.log("Quiz finished!");
+    setIsQuizActive(false); 
+    setQuizCompleted(true); 
+  };
+
+  const handleAnswer = (chosenTrackId: string) => {
+    if (isShowingFeedback) return; // Prevent double clicks during feedback
+
+    const currentQ = quizQuestions[currentQuestionIndex];
+    if (!currentQ) return; // Should not happen
+
+    // Find original indices
+    const indexA = topTracks.findIndex(t => t.id === currentQ.trackA.id);
+    const indexB = topTracks.findIndex(t => t.id === currentQ.trackB.id);
+
+    // Determine correct answer (lower index is higher rank)
+    let correctId: string;
+    if (indexA === -1 && indexB === -1) {
+        console.error("Couldn't find either track in original list for feedback");
+        correctId = 'error'; // Handle error case
+    } else if (indexA === -1) {
+        correctId = currentQ.trackB.id; // B must be correct if A not found
+    } else if (indexB === -1) {
+        correctId = currentQ.trackA.id; // A must be correct if B not found
+    } else {
+        correctId = indexA < indexB ? currentQ.trackA.id : currentQ.trackB.id;
+    }
+
+    const isCorrect = chosenTrackId === correctId;
+
+    // Set feedback state
+    setAnswerFeedback({ chosenId: chosenTrackId, correctId: correctId, isCorrect });
+    setIsShowingFeedback(true);
+
+    // Wait before proceeding
+    setTimeout(() => {
+      setIsShowingFeedback(false);
+      setAnswerFeedback(null);
+      
+      const nextIndex = currentQuestionIndex + 1;
+      if (nextIndex < quizQuestions.length) {
+        setCurrentQuestionIndex(nextIndex);
+      } else {
+        endQuiz(); // Call endQuiz after timeout if last question
+      }
+    }, 1000); // 1 second delay
+  };
+  // --- END QUIZ LOGIC ---
+
+  // --- FETCH TRACKS (depends on startQuiz having stable identity) --- 
   const fetchTopTracks = useCallback(async (token: string | null) => {
     if (!token) {
       console.error("fetchTopTracks called without a token.");
@@ -79,6 +154,8 @@ export default function QuizClient() {
       console.log('DEBUG: fetchTopTracks setting isAuthenticated = false (no token)');
       setIsAuthenticated(false);
       setIsQuizActive(false);
+      setQuizCompleted(false);
+      setIsShowingFeedback(false); setAnswerFeedback(null); // Reset on error
       return;
     }
     setIsLoadingTracks(true);
@@ -101,16 +178,30 @@ export default function QuizClient() {
           setErrorDetails('Please log in again.');
           setTrackError(null);
           setIsQuizActive(false);
+          setQuizCompleted(false);
+          setIsShowingFeedback(false); setAnswerFeedback(null); // Reset on error
         } else {
           throw new Error(data.error || `HTTP error! status: ${res.status}`);
         }
       } else {
-        setTopTracks(data.tracks || []);
+        const fetchedTracks = data.tracks || [];
+        setTopTracks(fetchedTracks);
         setError(null);
         setErrorDetails(null);
         setIsQuizActive(false);
         setQuizQuestions([]);
         setCurrentQuestionIndex(0);
+        setQuizCompleted(false);
+        setIsShowingFeedback(false); setAnswerFeedback(null); // Reset on success before start
+        
+        if (fetchedTracks.length >= 10) {
+          console.log("DEBUG: Tracks fetched, automatically starting quiz.");
+          startQuiz(fetchedTracks); // Now calls the stable startQuiz function
+        } else {
+          console.log("DEBUG: Not enough tracks to start quiz, marking as complete.");
+          setTrackError("Not enough track data to start the quiz.");
+          setQuizCompleted(true);
+        }
       }
     } catch (e) {
       console.error("Failed to fetch top tracks:", e);
@@ -118,11 +209,14 @@ export default function QuizClient() {
       setError(null);
       setErrorDetails(null);
       setIsQuizActive(false);
+      setQuizCompleted(false);
+      setIsShowingFeedback(false); setAnswerFeedback(null); // Reset on error
     } finally {
       setIsLoadingTracks(false);
     }
-  }, []);
+  }, [startQuiz]); // Dependency: startQuiz (now stable due to useCallback)
 
+  // --- Auth Effect (depends on fetchTopTracks having stable identity) ---
   useEffect(() => {
     let isMounted = true;
     const currentSearchParams = new URLSearchParams(searchParams.toString());
@@ -222,7 +316,7 @@ export default function QuizClient() {
     return () => {
       isMounted = false;
     };
-  }, [searchParams, router]); 
+  }, [searchParams, router, fetchTopTracks]); // Dependency: fetchTopTracks (stable)
 
   const handleLogin = () => {
     // Restore state generation
@@ -250,48 +344,6 @@ export default function QuizClient() {
     }
   };
 
-  // --- NEW Quiz Logic ---
-  const startQuiz = () => {
-    if (topTracks.length < 10) {
-      // Need at least 10 tracks for 5 pairs
-      setTrackError("Not enough track data to start the quiz."); // Or a general error
-      return;
-    }
-    // Shuffle tracks and pick first 10 for 5 pairs
-    const shuffledTracks = shuffleArray([...topTracks]);
-    const selectedTracks = shuffledTracks.slice(0, 10);
-    
-    const questions: QuizQuestion[] = [];
-    for (let i = 0; i < 10; i += 2) {
-      questions.push({ trackA: selectedTracks[i], trackB: selectedTracks[i+1] });
-    }
-
-    setQuizQuestions(questions);
-    setCurrentQuestionIndex(0);
-    setIsQuizActive(true);
-    setTrackError(null); // Clear any previous errors
-  };
-
-  const handleAnswer = (chosenTrackId: string) => {
-    // TODO: Implement scoring or answer tracking later
-    console.log(`User chose track ID: ${chosenTrackId} for question ${currentQuestionIndex}`);
-
-    const nextIndex = currentQuestionIndex + 1;
-    if (nextIndex < quizQuestions.length) {
-      setCurrentQuestionIndex(nextIndex);
-    } else {
-      // Quiz finished
-      endQuiz();
-    }
-  };
-
-  const endQuiz = () => {
-    console.log("Quiz finished!");
-    setIsQuizActive(false);
-    // TODO: Show results?
-  };
-  // --- End Quiz Logic ---
-
   // --- RENDER LOGIC --- (Moved from page.tsx)
   let content;
   if (isAuthenticated === null) {
@@ -301,13 +353,7 @@ export default function QuizClient() {
     // AUTHENTICATED! Now show user info or loading tracks
     content = (
       <div className="w-full">
-        {/* Show username when available, otherwise generic auth message */}
-        <p className="mb-6 text-lg">
-          Authenticated as {user ? (user.displayName || user.id || 'User') : '...'}!
-        </p>
-        {/* Rest of the track loading/display logic */}
-        {isLoadingTracks && <p>Fetching your top tracks...</p>}
-        
+        {/* Show message while loading tracks OR if quiz is active but not completed */} 
         {!isLoadingTracks && trackError && (
           <div className="bg-red-800 border border-red-600 text-red-100 px-4 py-3 rounded-lg relative mb-6 max-w-lg mx-auto" role="alert">
             <strong className="font-bold">Track Error:</strong>
@@ -315,43 +361,35 @@ export default function QuizClient() {
           </div>
         )}
         
-        {!isLoadingTracks && !trackError && topTracks.length > 0 && (
+        {!isLoadingTracks && !trackError && quizCompleted && topTracks.length > 0 && (
           <div className="mt-6 w-full max-w-lg mx-auto">
             <div className="flex justify-between items-center mb-4">
                  <h3 className="text-xl font-semibold font-mono text-left">Your Top 20 Tracks</h3>
-                 {!isQuizActive && topTracks.length >= 10 && (
-                    <Button onClick={startQuiz} size="sm" className="font-mono lowercase">Start Quiz</Button>
-                 )}
             </div>
-            {topTracks.length < 10 && <p className="text-sm text-yellow-500">Need at least 10 tracks to start the quiz.</p>} 
-            <div className={`${isQuizActive ? 'filter blur-sm pointer-events-none' : ''}`}>
-                 <ul className="space-y-3 text-left">
-                     {topTracks.map((track, index) => (
-                         <li key={track.id} className="flex items-center bg-gray-800 p-3 rounded-md shadow">
-                             <span className="text-gray-400 w-6 mr-3 text-right">{index + 1}.</span>
-                             {track.albumImageUrl && (
-                                 <Image
-                                     src={track.albumImageUrl}
-                                     alt={`Album art for ${track.name}`}
-                                     width={40}
-                                     height={40}
-                                     className="rounded mr-3"
-                                     unoptimized
-                                 />
-                             )}
-                             <div>
-                                 <p className="font-medium text-white">{track.name}</p>
-                                 <p className="text-sm text-gray-400">{track.artists}</p>
-                             </div>
-                         </li>
-                     ))} 
-                 </ul>
-            </div>
+            {/* Message about needing 10 tracks is handled by trackError now */}
+            {/* REMOVED conditional blurring div */}
+             <ul className="space-y-3 text-left">
+                 {topTracks.map((track, index) => (
+                     <li key={track.id} className="flex items-center bg-gray-800 p-3 rounded-md shadow">
+                         <span className="text-gray-400 w-6 mr-3 text-right">{index + 1}.</span>
+                         {track.albumImageUrl && (
+                             <Image
+                                 src={track.albumImageUrl}
+                                 alt={`Album art for ${track.name}`}
+                                 width={40}
+                                 height={40}
+                                 className="rounded mr-3"
+                                 unoptimized
+                             />
+                         )}
+                         <div>
+                             <p className="font-medium text-white">{track.name}</p>
+                             <p className="text-sm text-gray-400">{track.artists}</p>
+                         </div>
+                     </li>
+                 ))} 
+             </ul>
           </div>
-        )}
-        
-        {!isLoadingTracks && !trackError && topTracks.length === 0 && (
-            <p className="text-gray-400">Ready.</p>
         )}
       </div>
     );
@@ -387,7 +425,7 @@ export default function QuizClient() {
       {content}
 
       {/* --- Quiz Modal --- */} 
-      <Dialog open={isQuizActive} onOpenChange={(open: boolean) => !open && endQuiz()}> 
+      <Dialog open={isQuizActive}> 
          <DialogContent className="sm:max-w-[600px] bg-gray-900 border-gray-700 text-white">
            <DialogHeader>
              <DialogTitle className="font-mono">Question {currentQuestionIndex + 1} / {quizQuestions.length}</DialogTitle>
@@ -404,7 +442,13 @@ export default function QuizClient() {
                     {/* Track A Button/Card */} 
                     <button
                       onClick={() => handleAnswer(currentQuestion.trackA.id)}
-                      className="flex-1 bg-gray-800 p-4 rounded-lg border border-gray-700 hover:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-75 transition-all duration-150 flex flex-col items-center text-center"
+                      disabled={isShowingFeedback} // Disable button during feedback
+                      // Apply conditional styling based on feedback
+                      className={`relative flex-1 bg-gray-800 p-4 rounded-lg border transition-all duration-150 flex flex-col items-center text-center \
+                                  ${isShowingFeedback && answerFeedback?.correctId === currentQuestion.trackA.id ? 'border-green-500 ring-2 ring-green-500' : ''} \
+                                  ${isShowingFeedback && answerFeedback?.chosenId === currentQuestion.trackA.id && !answerFeedback?.isCorrect ? 'border-red-500 ring-2 ring-red-500' : ''} \
+                                  ${!isShowingFeedback ? 'border-gray-700 hover:border-yellow-400' : 'border-gray-700'} \
+                                  ${isShowingFeedback ? 'opacity-75' : ''}`}
                     >
                       {currentQuestion.trackA.albumImageUrl ? (
                         <Image
@@ -420,6 +464,16 @@ export default function QuizClient() {
                       )}
                       <p className="font-semibold text-base mb-1 truncate w-full" title={currentQuestion.trackA.name}>{currentQuestion.trackA.name}</p>
                       <p className="text-sm text-gray-400 truncate w-full" title={currentQuestion.trackA.artists}>{currentQuestion.trackA.artists}</p>
+                      {/* --- Feedback Text --- */}
+                      {isShowingFeedback && answerFeedback?.chosenId === currentQuestion.trackA.id && (
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-lg font-bold z-10" >
+                          {answerFeedback.isCorrect ? (
+                            <span className="text-green-400">Correct!</span>
+                          ) : (
+                            <span className="text-red-400">Incorrect!</span>
+                          )}
+                        </div>
+                      )}
                     </button>
 
                     {/* Separator (optional) */} 
@@ -428,7 +482,13 @@ export default function QuizClient() {
                      {/* Track B Button/Card */} 
                      <button
                       onClick={() => handleAnswer(currentQuestion.trackB.id)}
-                      className="flex-1 bg-gray-800 p-4 rounded-lg border border-gray-700 hover:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-75 transition-all duration-150 flex flex-col items-center text-center"
+                      disabled={isShowingFeedback} // Disable button during feedback
+                       // Apply conditional styling based on feedback
+                      className={`relative flex-1 bg-gray-800 p-4 rounded-lg border transition-all duration-150 flex flex-col items-center text-center \
+                                  ${isShowingFeedback && answerFeedback?.correctId === currentQuestion.trackB.id ? 'border-green-500 ring-2 ring-green-500' : ''} \
+                                  ${isShowingFeedback && answerFeedback?.chosenId === currentQuestion.trackB.id && !answerFeedback?.isCorrect ? 'border-red-500 ring-2 ring-red-500' : ''} \
+                                  ${!isShowingFeedback ? 'border-gray-700 hover:border-yellow-400' : 'border-gray-700'} \
+                                  ${isShowingFeedback ? 'opacity-75' : ''}`}
                     >
                       {currentQuestion.trackB.albumImageUrl ? (
                         <Image
@@ -444,11 +504,32 @@ export default function QuizClient() {
                       )}
                       <p className="font-semibold text-base mb-1 truncate w-full" title={currentQuestion.trackB.name}>{currentQuestion.trackB.name}</p>
                       <p className="text-sm text-gray-400 truncate w-full" title={currentQuestion.trackB.artists}>{currentQuestion.trackB.artists}</p>
+                      {/* --- Feedback Text --- */}
+                      {isShowingFeedback && answerFeedback?.chosenId === currentQuestion.trackB.id && (
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-lg font-bold z-10">
+                          {answerFeedback.isCorrect ? (
+                            <span className="text-green-400">Correct!</span>
+                          ) : (
+                            <span className="text-red-400">Incorrect!</span>
+                          )}
+                        </div>
+                      )}
                     </button>
                   </div>
                 ) : (
                      <p>Loading question...</p>
                 )}
+                
+                {/* --- Skip Button (disable during feedback?) --- */} 
+                 <div className="mt-6 text-center"> 
+                    <button 
+                        onClick={endQuiz} 
+                        disabled={isShowingFeedback} // Disable skip during feedback too
+                        className={`text-sm text-gray-400 hover:text-yellow-400 font-mono lowercase transition-colors duration-150 ${isShowingFeedback ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                        skip the quiz, show me my spotify wrapped
+                    </button>
+                 </div>
            </div>
          </DialogContent>
        </Dialog>

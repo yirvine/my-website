@@ -23,7 +23,7 @@ export default function QuizPage() {
         {/* --- End Sticky Header Div --- */}
 
         {/* Main Title - Remains in the layout */} 
-        <h2 className="text-3xl font-semibold mb-6 font-mono">Spotify Top Tracks Quiz</h2>
+        <h2 className="text-3xl font-semibold mb-6 font-mono">a custom spotify wrapped</h2>
 
         {/* Suspense Boundary wrapping the Client Component */}
         <Suspense fallback={<LoadingFallback />}>
