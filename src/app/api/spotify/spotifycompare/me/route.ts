@@ -29,11 +29,11 @@ export async function GET(request: NextRequest) {
   const accessToken = authHeader?.split(' ')?.[1]; // Extract token after 'Bearer '
 
   if (!accessToken) {
-    console.error('[API /quiz/me] Missing Authorization header or token');
+    console.error('[API /compare/me] Missing Authorization header or token');
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
-  console.log('[API /quiz/me] Access token found in header, fetching user profile...');
+  console.log('[API /compare/me] Access token found in header, fetching user profile...');
 
   const spotifyApi = new SpotifyWebApi(); // No need for credentials here
   spotifyApi.setAccessToken(accessToken);
@@ -48,11 +48,11 @@ export async function GET(request: NextRequest) {
       email: meData.body.email, // Include if needed and scope allows
     };
 
-    console.log('[API /quiz/me] Successfully fetched user profile.');
+    console.log('[API /compare/me] Successfully fetched user profile.');
     return NextResponse.json(profile);
 
   } catch (error: unknown) {
-    console.error('[API /quiz/me] Error fetching user profile from Spotify:', error);
+    console.error('[API /compare/me] Error fetching user profile from Spotify:', error);
     
     // Type assertion after checking it's likely the expected error shape
     const spotifyError = error as SpotifyApiError;

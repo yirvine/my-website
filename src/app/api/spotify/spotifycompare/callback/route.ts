@@ -65,8 +65,9 @@ export async function GET(request: NextRequest) {
     const userName = meData.body.display_name || meData.body.id;
     console.log('[Callback Route] Successfully fetched user: ', userName);
 
-    // Redirect to quiz page with success, user, accessToken, AND state
-    const redirectUrl = new URL('/quiz', request.url);
+    // Redirect user back to the frontend page with params
+    console.log('[API /spotifycompare/callback] Redirecting to frontend...');
+    const redirectUrl = new URL('/spotifycompare', request.nextUrl.origin); // Use /spotifycompare
     redirectUrl.searchParams.set('success', 'true');
     redirectUrl.searchParams.set('user', userName);
     redirectUrl.searchParams.set('state', state); // Pass state back
