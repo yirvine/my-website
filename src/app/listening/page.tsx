@@ -72,8 +72,13 @@ export default function ListeningPage() {
           </Link>
         </div>
         {/* --- End Sticky Header Div --- */}
-        <h1 className="text-4xl font-mono mb-2">songs i&apos;ve been listening to lately</h1>
-         <p className="text-gray-400 mb-8 text-sm">my custom &apos;spotify wrapped&apos; of the last 6 months, via their web api</p>
+        <h1 className="text-4xl font-mono mb-2">recent listening, via spotify&apos;s web API</h1>
+         <p className="text-gray-400 mb-8 text-base">my custom &apos;spotify wrapped&apos; of the last 6 months, via their web api</p>
+
+        <p className="text-base text-gray-400 mb-8 max-w-prose font-mono">
+          Note: While this page currently just displays <em>my</em> listening data
+          via the Spotify API (running in development mode), visitors will soon be able to generate their own custom wrapped results using the same features here, pending extended API access from Spotify. Check back soon.
+        </p>
 
         {isLoading && <p>Loading top tracks...</p>}
         {error && <p className="text-red-500">{error}</p>}

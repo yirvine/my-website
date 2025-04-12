@@ -17,14 +17,14 @@ export default function Portfolio() {
       link: "https://github.com/yirvine/runit#readme"
     },
     {
-      title: "Spotify Setlist Generator",
-      description: "An AI-powered tool that generates DJ setlists based on your music taste and mixing preferences.",
-      link: "https://github.com/yirvine/spotify-DJ-setlist-generator#readme"
-    },
-    {
       title: "XAI Image Classifier",
       description: "Seeing through AI's eyes: A CNN-based model with Integrated Gradients to visualize a model's 'thinking' process in classifying satellite images",
       link: "https://github.com/yirvine/XAI-in-image-classification#readme"
+    },
+    {
+      title: "Spotify Setlist Generator",
+      description: "An AI-powered tool that generates DJ setlists based on your music taste and mixing preferences.",
+      link: "https://github.com/yirvine/spotify-DJ-setlist-generator#readme"
     },
     {
       title: "Predicting Song Popularity with Machine Learning",
@@ -152,15 +152,15 @@ export default function Portfolio() {
               <Link href="/life" className="block hover:text-yellow-400 transition-colors">
                 → camera roll
               </Link>
-
-              <Link href="/song-ideas" className="block hover:text-yellow-400 transition-colors">
-                → demo songs
-              </Link>
               <Link href="/webcam" className="block hover:text-yellow-400 transition-colors">
                 → a cool webcam
               </Link>
+              <Link href="/song-ideas" className="block hover:text-yellow-400 transition-colors">
+                → demo songs
+              </Link>
+
               <Link href="/listening" className="block hover:text-yellow-400 transition-colors">
-                → recent listening via Spotify&apos;s web API
+                → recent listening
               </Link>
             </div>
           </div>
