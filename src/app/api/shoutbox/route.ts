@@ -58,7 +58,7 @@ export async function POST(request: Request) {
       id: Date.now(),
       username: username.trim().slice(0, 50),
       message: message.trim().slice(0, 280),
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      timestamp: new Date().toISOString(),
     };
 
     // Explicitly stringify the object

@@ -9,7 +9,33 @@ interface Message {
   id: number
   username: string
   message: string
-  timestamp: string
+  timestamp: string // Expecting ISO 8601 UTC string format from API
+}
+
+// Helper function to format ISO timestamp to local MM/DD HH:MM time
+function formatDisplayTime(isoString: string): string {
+  if (!isoString) return '';
+  try {
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) {
+      console.warn("Invalid timestamp received:", isoString);
+      return isoString;
+    }
+
+    // Get MM/DD part
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const day = String(date.getDate()).padStart(2, '0');
+
+    // Get HH:MM part (local time)
+    const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }); // Use hour1a2: false for 24-hour clock
+
+    // Combine them
+    return `${month}/${day} ${timeString}`; // e.g., "10/27 14:30"
+
+  } catch (error) {
+    console.error("Error formatting time:", error);
+    return isoString;
+  }
 }
 
 export function Shoutbox() {
@@ -95,7 +121,7 @@ export function Shoutbox() {
           messages.map((msg) => (
             <div key={msg.id} className="text-sm">
               <span className="font-mono text-yellow-400">{msg.username}</span>
-              <span className="text-gray-400 mx-2">[{msg.timestamp}]</span>
+              <span className="text-gray-400 mx-2">[{formatDisplayTime(msg.timestamp)}]</span>
               <span className="text-gray-300">{msg.message}</span>
             </div>
           ))
