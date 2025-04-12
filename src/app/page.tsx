@@ -32,13 +32,13 @@ export default function Portfolio() {
       link: "https://github.com/yirvine/Pop-Music-Trend-Analysis#readme"
     },
     {
-      title: "Using Deep Learning to Detect Breathing Problems",
+      title: "Detect Breathing Problems with Deep Learning",
       description: "An innovative PyTorch-based 3D Convolutional Neural Network to detect breathing patterns in sleeping clients via video to promptly identify medical emergencies. Done in collaboration with University of Calgary Biometrics Lab.",
       link: "https://github.com/chvaldez10/Team-Design-Project#readme"
     },
     {
       title: "This Website",
-      description: "The code behind how this portfolio was built",
+      description: "The code behind, well, this.",
       link: "https://github.com/yirvine/my-website"
     }
   ]
@@ -238,12 +238,13 @@ export default function Portfolio() {
                 {/* Content from the 'Tech Stack' sidebar section */} 
                 <div className="space-y-2 text-gray-300 text-sm"> 
                   <p><span className="font-mono text-gray-100">Languages:</span> Python, JavaScript, TypeScript, SQL, Java</p>
-                <p><span className="font-mono text-gray-100">Frontend:</span>React, Next.js, React Native, Tailwind CSS, HTML                  </p>
-                  <p><span className="font-mono text-gray-100">Backend:</span> Node.js, FastAPI, Flask, REST APIs</p>
+                <p><span className="font-mono text-gray-100">Frontend:</span>React, Next.js, React Native, Tailwind CSS </p>
+                  <p><span className="font-mono text-gray-100">Backend:</span> Node.js, FastAPI, Flask</p>
                   <p><span className="font-mono text-gray-100">Databases:</span> PostgreSQL, Snowflake, Firebase, Redis, DB2</p>
-                  <p><span className="font-mono text-gray-100">Data & ML:</span> PyTorch, Scikit-learn, Matplotlib, Pandas, Numpy, Spark</p>
-                  <p><span className="font-mono text-gray-100">Cloud/DevOps:</span> AWS, Azure, Docker, Git, Vercel</p>
-                </div>
+                  <p><span className="font-mono text-gray-100">Data & ML:</span> PyTorch, Scikit-learn, Matplotlib, Pandas, Numpy, WandB</p>
+                  <p><span className="font-mono text-gray-100">Cloud/DevOps:</span> AWS, Azure, Docker, Vercel, HPC (SLURM)
+                  </p>
+                  </div>
               </section>
 
               {/* Contact Section (Existing - should remain at bottom) */}
