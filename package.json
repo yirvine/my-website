@@ -22,6 +22,7 @@
     "framer-motion": "^12.6.3",
     "lucide-react": "^0.486.0",
     "next": "15.2.4",
+    "ogl": "^1.0.11",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-webcam": "^7.2.0",

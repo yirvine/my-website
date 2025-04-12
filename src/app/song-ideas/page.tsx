@@ -5,6 +5,7 @@ import Link from 'next/link'; // Import Link for navigation
 import { FixedSizeList as List } from 'react-window'; // Import react-window
 import { Play, Pause, Volume2, VolumeX, SkipForward, Rewind, Undo2, Redo2 } from 'lucide-react'; // Import icons for play/pause and volume, and skip/rewind
 import { Button } from "@/components/ui/button"; // Assuming you have Button component
+import Aurora from '@/components/Aurora'; // Import the Aurora component
 
 // Define an interface for the demo data structure
 interface Demo {
@@ -63,7 +64,10 @@ const Row = ({ index, style, data }: { index: number; style: React.CSSProperties
 
     return (
         <div style={style}>
-            <div className={`p-4 pb-4 border rounded-lg shadow-sm h-full flex flex-col ${isActive ? 'border-yellow-400 bg-gray-800' : 'border-gray-700 bg-gray-900'}`}>
+            <div 
+                className={`p-4 pb-4 border rounded-lg shadow-sm h-full flex flex-col ${isActive ? 'border-yellow-400 bg-gray-800' : 'border-gray-700 bg-gray-900 hover:bg-gray-800'} opacity-75 transition-colors duration-200 cursor-pointer`}
+                onClick={() => handlePlayClick(index)}
+            >
                 {/* Top section: Title and Timestamp */}
                 <div>
                     <h2 className="text-xl font-mono font-semibold mb-2 truncate" title={cleanFileName(demo.fileName)}>
@@ -107,6 +111,9 @@ const Row = ({ index, style, data }: { index: number; style: React.CSSProperties
     );
 };
 // --- End React Window Row Component ---
+
+// Define the colors outside the component for stable reference
+const auroraColorStops = ["#00D8FF", "#7CFF67", "#00D8FF"];
 
 export default function SongIdeasPage() {
   const [demos, setDemos] = useState<Demo[]>([]);
@@ -339,13 +346,23 @@ export default function SongIdeasPage() {
   };
 
   return (
-    // Apply the main site layout classes
-    <div className="min-h-screen bg-black text-white flex flex-col">
-      {/* Container for top content + sticky header */}
-      <div className="max-w-7xl w-full mx-auto px-4 pt-8">
+    // Apply the main site layout classes and make it relative for absolute positioning of children
+    <div className="min-h-screen bg-black text-white flex flex-col relative">
+      {/* Aurora Background */}
+      <Aurora
+        className="absolute inset-0 z-0 opacity-30" // Positioned behind content, adjust opacity as needed
+        colorStops={auroraColorStops} // Use the stable variable
+        blend={0.5}
+        amplitude={1.0}
+        speed={0.5}
+      />
+
+      {/* Container for top content + sticky header - Make content relative and give z-index to ensure it's above aurora */}
+      <div className="max-w-7xl w-full mx-auto px-4 pt-8 relative z-10">
         {/* --- Sticky Header Div --- */}
-        {/* Apply sticky, z-index, bg. Negative margins pull it edge-to-edge within padding, py adds vertical space */}
-        <div className="sticky top-0 z-20 bg-black py-3 -mt-8 -mx-4 px-4 mb-4">
+        {/* Apply sticky, z-index. Negative margins pull it edge-to-edge within padding, py adds vertical space */}
+        {/* REMOVED bg-black to make it transparent */}
+        <div className="sticky top-0 z-20 py-3 -mt-8 -mx-4 px-4 mb-4">
           {/* Keep existing link styles (font, hover, etc.) */}
           <Link href="/" className="text-1xl font-mono block hover:text-yellow-400 transition-colors duration-200">
             &larr; back to home
@@ -355,11 +372,11 @@ export default function SongIdeasPage() {
         
         {/* Apply mono font to heading */}
         <h1 className="text-4xl font-mono mb-6">song_ideas.mp3</h1>
-        <p className="text-gray-400 mb-8">song ideas synced from my dropbox, some rough, some refined</p>
+        <p className="mb-8 font-mono text-gray-300">song ideas synced from my dropbox, some rough, some refined</p>
       </div>
 
-      {/* List container - takes remaining height */}
-      <div ref={containerRef} className={`flex-grow max-w-7xl w-full mx-auto px-4 ${currentPlayingIndex !== null ? 'pb-0' : ''}`}> {/* Removed base padding, only add pb-16 when player is active */}
+      {/* List container - takes remaining height - Make content relative and give z-index */}
+      <div ref={containerRef} className={`flex-grow max-w-7xl w-full mx-auto px-4 ${currentPlayingIndex !== null ? 'pb-0' : ''} relative z-10`}> {/* Add relative z-10 */}
         {/* Loading/Error/No Demos messages will inherit text-white */}
         {isLoading && <p>Loading latest demos...</p>}
         {error && <p className="text-red-500">{error}</p>}
@@ -382,6 +399,7 @@ export default function SongIdeasPage() {
       </div>
 
       {/* --- Enhanced Bottom Player Bar --- */}
+      {/* Ensure player bar is above the background (already has z-50) */}
       {currentPlayingIndex !== null && demos[currentPlayingIndex] && (
           <div className="fixed bottom-0 left-0 right-0 bg-gray-900 p-3 border-t border-gray-700 z-50 flex items-center gap-3 text-sm">
               {/* Restart Button */}
