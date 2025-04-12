@@ -1,5 +1,11 @@
+import { Suspense } from 'react'; // Import Suspense
 import SpotifyCompareClient from "./SpotifyCompareClient"; // Updated import path and name
 import Link from 'next/link'; // <-- Import Link
+
+// Define a simple loading fallback component
+function LoadingFallback() {
+  return <p>Loading comparison...</p>; // Or a more specific loading state
+}
 
 export default function SpotifyComparePage() { // Renamed page component
   return (
@@ -16,7 +22,11 @@ export default function SpotifyComparePage() { // Renamed page component
         {/* --- End Sticky Header Div --- */}
         {/* Ensure h1 is not centered */}
         <h1 className="text-3xl font-bold mb-8 font-mono">a custom spotify wrapped</h1>
-        <SpotifyCompareClient />
+        
+        {/* Wrap the client component in Suspense */}
+        <Suspense fallback={<LoadingFallback />}>
+          <SpotifyCompareClient />
+        </Suspense>
       </div>
     </div>
   );
