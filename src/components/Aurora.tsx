@@ -143,6 +143,8 @@ export default function Aurora(props: AuroraProps) {
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     gl.canvas.style.backgroundColor = "transparent";
 
+    // Disable prefer-const rule for this line as 'program' is reassigned later
+    // eslint-disable-next-line prefer-const
     let program: Program | undefined;
 
     function resize() {
@@ -160,6 +162,8 @@ export default function Aurora(props: AuroraProps) {
     if (geometry.attributes.uv) {
       // Using 'as any' here to bypass strict type checking for deleting a potentially
       // existing property on the geometry attributes object provided by the 'ogl' library.
+      // Disable no-explicit-any rule for this specific line
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       delete (geometry.attributes as any).uv;
     }
 
