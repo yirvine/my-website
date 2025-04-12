@@ -401,46 +401,69 @@ export default function SongIdeasPage() {
       {/* --- Enhanced Bottom Player Bar --- */}
       {/* Ensure player bar is above the background (already has z-50) */}
       {currentPlayingIndex !== null && demos[currentPlayingIndex] && (
-          <div className="fixed bottom-0 left-0 right-0 bg-gray-900 p-3 border-t border-gray-700 z-50 flex items-center gap-3 text-sm">
-              {/* Restart Button */}
-              <Button variant="ghost" size="icon" onClick={handleRestart} title="Restart track" className="text-white hover:bg-gray-700">
-                  <Rewind className="h-5 w-5" />
-              </Button>
-              {/* --- Rewind 15s Button --- */}
-              <Button variant="ghost" size="icon" onClick={handleSeekBackward} title="Rewind 15s" className="text-white hover:bg-gray-700">
-                  <Undo2 className="h-5 w-5" />
-              </Button>
-              {/* Play/Pause Button */}
-              <Button variant="ghost" size="icon" onClick={togglePlayPause} className="text-white hover:bg-gray-700">
-                  {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
-              </Button>
-              {/* --- Skip 15s Button --- */}
-              <Button variant="ghost" size="icon" onClick={handleSeekForward} title="Skip 15s" className="text-white hover:bg-gray-700">
-                  <Redo2 className="h-5 w-5" />
-              </Button>
-              {/* Next Button */}
-              <Button variant="ghost" size="icon" onClick={handleSkipNext} title="Next track" className="text-white hover:bg-gray-700">
-                  <SkipForward className="h-5 w-5" />
-              </Button>
+          // Refactor for responsive layout: flex-col default, sm:flex-row
+          <div className="fixed bottom-0 left-0 right-0 bg-gray-900 p-3 pb-4 sm:pb-3 border-t border-gray-700 z-50 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-sm">
 
-              {/* Current Time */}
-              <span className="font-mono text-gray-400 w-10 text-right">{formatTime(currentTime)}</span>
+              {/* --- Seek Bar Group (Order 1 mobile, Order 2 desktop) --- */}
+              <div className="flex items-center w-full gap-2 sm:gap-3 order-1 sm:order-2 sm:flex-grow">
+                  {/* Current Time */}
+                  <span className="font-mono text-gray-400 w-10 text-right">{formatTime(currentTime)}</span>
+                  {/* Seek Bar */}
+                  <input
+                      type="range"
+                      min="0"
+                      max={duration || 0}
+                      value={currentTime}
+                      onChange={handleSeek}
+                      className="flex-grow h-1 bg-gray-700 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-yellow-400"
+                  />
+                  {/* Duration */}
+                  <span className="font-mono text-gray-400 w-10 text-left">{formatTime(duration)}</span>
+              </div>
 
-              {/* Seek Bar */}
-              <input
-                  type="range"
-                  min="0"
-                  max={duration || 0}
-                  value={currentTime}
-                  onChange={handleSeek}
-                  className="flex-grow h-1 bg-gray-700 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-yellow-400"
-              />
+              {/* --- Control Buttons Group (Order 2 mobile, Order 1 desktop) --- */}
+              <div className="flex justify-center items-center gap-1 sm:gap-1 order-2 sm:order-1">
+                  {/* Restart Button - Add focus-visible:ring-0 and !important */} 
+                  <Button variant="ghost" onClick={handleRestart} title="Restart track" className="text-white hover:bg-gray-700 p-2 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:ring-offset-0 active:!bg-transparent"> 
+                      <Rewind className="h-8 w-8" /> 
+                  </Button>
+                  {/* --- Rewind 15s Button - Add focus-visible:ring-0 and !important --- */}
+                  <Button variant="ghost" onClick={handleSeekBackward} title="Rewind 15s" className="text-white hover:bg-gray-700 p-2 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:ring-offset-0 active:!bg-transparent"> 
+                      <Undo2 className="h-8 w-8" />
+                  </Button>
+                  {/* Play/Pause Button - Add focus-visible:ring-0 and !important */} 
+                  <Button variant="ghost" onClick={togglePlayPause} className="text-white hover:bg-gray-700 p-2 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:ring-offset-0 active:!bg-transparent"> 
+                      {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />} 
+                  </Button>
+                  {/* --- Skip 15s Button - Add focus-visible:ring-0 and !important --- */} 
+                  <Button variant="ghost" onClick={handleSeekForward} title="Skip 15s" className="text-white hover:bg-gray-700 p-2 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:ring-offset-0 active:!bg-transparent"> 
+                      <Redo2 className="h-8 w-8" /> 
+                  </Button>
+                  {/* Next Button - Add focus-visible:ring-0 and !important */} 
+                  <Button variant="ghost" onClick={handleSkipNext} title="Next track" className="text-white hover:bg-gray-700 p-2 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:ring-offset-0 active:!bg-transparent"> 
+                      <SkipForward className="h-8 w-8" />
+                  </Button>
+              </div>
 
-              {/* Duration */}
-              <span className="font-mono text-gray-400 w-10 text-left">{formatTime(duration)}</span>
+              {/* --- Mobile Volume Control (Order 3 mobile, hidden desktop) --- */}
+              <div className="flex justify-center items-center gap-2 w-full order-3 sm:hidden">
+                   <Button variant="ghost" size="icon" onClick={toggleMute} className="text-white hover:bg-gray-700">
+                      {isMuted || volume === 0 ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                   </Button>
+                   <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.01"
+                      value={isMuted ? 0 : volume}
+                      onChange={handleVolume}
+                      // Use w-1/2 for narrower mobile volume slider
+                      className="w-1/2 h-1 bg-gray-700 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-yellow-400"
+                   />
+              </div>
 
-              {/* Volume Control */}
-              <div className="flex items-center gap-2">
+              {/* --- Desktop Volume Control (hidden mobile, Order 3 desktop) --- */}
+              <div className="hidden sm:flex items-center gap-2 order-3">
                    <Button variant="ghost" size="icon" onClick={toggleMute} className="text-white hover:bg-gray-700">
                       {isMuted || volume === 0 ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
                    </Button>
@@ -455,8 +478,8 @@ export default function SongIdeasPage() {
                   />
               </div>
 
-              {/* Track Title (optional, maybe for larger screens?) */}
-               <p className="hidden md:block font-mono truncate flex-shrink-0 ml-4">
+              {/* --- Track Title (hidden mobile, Order 4 desktop) --- */}
+               <p className="hidden sm:hidden md:block font-mono truncate flex-shrink-0 ml-4 order-4">
                  {cleanFileName(demos[currentPlayingIndex].fileName)}
                </p>
 
