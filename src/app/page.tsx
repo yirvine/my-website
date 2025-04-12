@@ -234,7 +234,7 @@ export default function Portfolio() {
             <div className="flex flex-col gap-4">
               {/* Tech Stack (Moved to Card) */}
               <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-3">
-                <h2 className="text-2xl font-mono mb-1.5">Tech Stack</h2> {/* Title changed */} 
+                <h2 className="text-2xl font-mono mb-1.5">Tech Stack & Tools</h2> {/* Title changed */} 
                 {/* Content from the 'Tech Stack' sidebar section */} 
                 <div className="space-y-2 text-gray-300 text-sm"> 
                   <p><span className="font-mono text-gray-100">Languages:</span> Python, JavaScript, TypeScript, SQL, Java</p>
