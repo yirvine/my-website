@@ -129,7 +129,7 @@ export default function Portfolio() {
               <div className="space-y-4 pt-1">
                 <p className="text-justify text-gray-200"> I started my career as a controls engineer, building backend tools and automation scripts for industrial systems, mainly in the 
                   pharmaceutical space. That experience sparked an interest in development, which led me to 
-                  complete a Master&apos;s in Software Engineering at University of Calgary — and continue my career fully focused in software engineering.
+                  complete a Master&apos;s in Software Engineering at University of Calgary — and continue my career fully focused on software development.
                 </p>
                 <p className="text-justify text-gray-200"> AI, system design, and working with APIs especially interest me. Having worked 
                   as a chemical engineer in the pharma space, I also maintain a strong interest in software projects that intersect with that field.
