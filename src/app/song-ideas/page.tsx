@@ -243,8 +243,16 @@ export default function SongIdeasPage() {
              if (wavesurferInstanceRef.current && audioRef.current) {
                  try {
                      wavesurferInstanceRef.current.load(audioRef.current.src);
-                 } catch (error) { /* ... error handling ... */ }
-             } else { /* ... error handling ... */ }
+                 } catch (error) {
+                      // Use the error variable by logging it
+                      console.error("Error calling wavesurfer.load inside timeout:", error);
+                      setIsFadingWaveform(false); // Reset fade on error
+                 }
+             } else {
+                 // Also handle the case where refs might be null here
+                 console.log("[WaveSurfer] Refs became null during fade timeout.");
+                 setIsFadingWaveform(false); // Reset fade
+             }
              fadeTimeoutRef.current = null;
          }, 500);
 
