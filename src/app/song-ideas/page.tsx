@@ -591,21 +591,6 @@ export default function SongIdeasPage() {
                   </Button>
               </div>
 
-              <div className="flex justify-center items-center gap-2 w-full order-3 sm:hidden">
-                   <Button variant="ghost" size="icon" onClick={toggleMute} className="text-white hover:bg-gray-700">
-                      {isMuted || volume === 0 ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-                   </Button>
-                   <input
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.01"
-                      value={isMuted ? 0 : volume}
-                      onChange={handleVolume}
-                      className="w-1/2 h-1 bg-gray-700 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-yellow-400"
-                   />
-              </div>
-
               <div className="hidden sm:flex items-center gap-2 order-3">
                    <Button variant="ghost" size="icon" onClick={toggleMute} className="text-white hover:bg-gray-700">
                       {isMuted || volume === 0 ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
