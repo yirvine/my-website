@@ -114,7 +114,8 @@ const Row = ({ index, style, data }: { index: number; style: React.CSSProperties
 // --- End React Window Row Component ---
 
 // Define the colors outside the component for stable reference
-const auroraColorStops = ["#00D8FF", "#7CFF67", "#00D8FF"];
+// Updated colors to match theme: Navy Blue, Gray, Yellow
+const auroraColorStops = ["#FBBF24", "#FFFFFF", "#FBBF24"];
 
 export default function SongIdeasPage() {
   const [demos, setDemos] = useState<Demo[]>([]);
@@ -138,6 +139,7 @@ export default function SongIdeasPage() {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const [isFadingWaveform, setIsFadingWaveform] = useState<boolean>(false); // State for fade effect
   const fadeTimeoutRef = useRef<NodeJS.Timeout | null>(null); // Ref to manage fade timeout
+  const [isTrackLoading, setIsTrackLoading] = useState<boolean>(false); // <-- Add loading state
 
   // Update list height based on container size
   useEffect(() => {
@@ -183,95 +185,95 @@ export default function SongIdeasPage() {
     checkMobile();
   }, []);
 
-  // --- Play Click Handler (Implement Fade Out, Always attempt play) ---
+  // --- Play Click Handler (Explicitly clear src before new load) ---
   const handlePlayClick = useCallback((index: number) => {
+    if (isTrackLoading) {
+      console.log("Ignoring click, track is already loading.");
+      return;
+    }
+
     const currentAudio = audioRef.current;
     if (!currentAudio || index < 0 || index >= demos.length) return;
 
     const demoToPlay = demos[index];
 
-    // Clear any pending fade-out timeout if user clicks rapidly
     if (fadeTimeoutRef.current) {
       clearTimeout(fadeTimeoutRef.current);
       fadeTimeoutRef.current = null;
     }
 
     if (currentPlayingIndex === index) {
-       // Toggle play/pause for the current track
-       setIsFadingWaveform(false); // Ensure fade is off
-       if (isPlaying) {
-           currentAudio.pause();
-       } else {
-           currentAudio.play().catch(e => console.error("Error resuming play:", e));
-       }
+       // Toggle play/pause
+       setIsFadingWaveform(false);
+       setIsTrackLoading(false);
+       if (isPlaying) currentAudio.pause();
+       else currentAudio.play().catch(e => console.error("Error resuming play:", e));
     } else {
-      // --- Load and Play New Track, Start Fade Out ---
+      // --- Load and Play New Track ---
       console.log(`Loading track: ${demoToPlay.relativePath}`);
-      // REMOVED: const wasPlaying = isPlaying;
-
+      setIsTrackLoading(true);
       setCurrentPlayingIndex(index);
       setCurrentTime(0);
       setDuration(0);
 
-      // Set src and load audio immediately
+      // --- Explicitly clear old source ---
+      console.log("Clearing previous audio src attribute...");
+      currentAudio.removeAttribute('src');
+      currentAudio.load();
+      // --- End explicit clear ---
+
+      // Now set the new source and proceed
       currentAudio.src = demoToPlay.relativePath;
       currentAudio.load();
-
-      // ALWAYS Attempt to play immediately after load
       currentAudio.play().then(() => {
            console.log("Immediate play() successful (or resolved).");
-           // Optimistically set playing state (native 'play' event will also fire)
            setIsPlaying(true);
       }).catch(e => {
-           // Ignore interruption errors, likely handled by subsequent events or plays
            if (e.name !== 'AbortError') {
                console.error("Error on immediate play():", e);
            } else {
                console.log("Immediate play() AbortError caught (likely okay).");
            }
       });
-      // REMOVED: else { setIsPlaying(false); } block
 
       // If WaveSurfer exists (desktop), START FADE OUT, then load after delay
       if (wavesurferInstanceRef.current && isMobile === false) {
          console.log("[WaveSurfer] Starting fade out...");
-         setIsFadingWaveform(true); // Trigger fade out CSS
+         setIsFadingWaveform(true);
 
-         // Set timeout to load AFTER fade animation
          fadeTimeoutRef.current = setTimeout(() => {
-             console.log("[WaveSurfer] Fade out complete, loading new media...");
              if (wavesurferInstanceRef.current && audioRef.current) {
                  try {
                      wavesurferInstanceRef.current.load(audioRef.current.src);
                  } catch (error) {
-                      // Use the error variable by logging it
                       console.error("Error calling wavesurfer.load inside timeout:", error);
-                      setIsFadingWaveform(false); // Reset fade on error
+                      setIsFadingWaveform(false);
+                      setIsTrackLoading(false); // <-- CLEAR LOADING on error
                  }
              } else {
-                 // Also handle the case where refs might be null here
                  console.log("[WaveSurfer] Refs became null during fade timeout.");
-                 setIsFadingWaveform(false); // Reset fade
+                 setIsFadingWaveform(false);
+                 setIsTrackLoading(false); // <-- CLEAR LOADING if refs gone
              }
              fadeTimeoutRef.current = null;
          }, 500);
 
       } else if (isMobile === false) {
-         // If on desktop but WS not initialized, just ensure fade is off
+         // If on desktop but WS not initialized, ensure fade is off
          setIsFadingWaveform(false);
+      } else {
+          // If on mobile, no WS, rely on 'canplay'
       }
     }
-  }, [demos, currentPlayingIndex, isPlaying, isMobile]); // Dependencies
+  }, [demos, currentPlayingIndex, isPlaying, isMobile, isTrackLoading]);
 
-  // Effect to setup audio player listeners
+  // --- Native Audio Listeners Effect ---
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    // --- Event Handlers --- 
     const handleAudioPlay = () => {
       setIsPlaying(true);
-      // *** Preload next track logic ***
       if (demos.length > 1 && currentPlayingIndex !== null) {
         const nextIndex = (currentPlayingIndex + 1) % demos.length;
         const nextDemo = demos[nextIndex];
@@ -279,20 +281,18 @@ export default function SongIdeasPage() {
           console.log(`[Player] Play started for index ${currentPlayingIndex}. Preloading next track (index ${nextIndex}): ${nextDemo.fileName}`);
           const preloader = new Audio();
           preloader.src = nextDemo.relativePath;
-          preloader.load(); // Hint browser to start loading
-          // No need to attach or play the preloader
+          preloader.load();
         }
       }
     };
     const handleAudioPause = () => setIsPlaying(false);
-    const handleAudioEnded = () => { // Autoplay next logic
+    const handleAudioEnded = () => {
         if (currentPlayingIndex === null || demos.length <= 1) return;
         const nextIndex = (currentPlayingIndex + 1) % demos.length;
         handlePlayClick(nextIndex); 
     };
     const handleLoadedMetadata = () => setDuration(audio.duration);
     
-    // Restore throttled time update handler
     const handleTimeUpdate = () => {
       if (timeUpdateThrottleRef.current) {
           return;
@@ -305,7 +305,6 @@ export default function SongIdeasPage() {
       }, 250); 
     };
     
-    // Restore volume change handler
     const handleVolumeChange = () => {
       if (audioRef.current) {
           setVolume(audioRef.current.volume);
@@ -313,15 +312,19 @@ export default function SongIdeasPage() {
       }
     };
 
-    // --- Add Listeners --- 
+    const handleCanPlay = () => {
+      console.log("Audio element 'canplay' event fired.");
+      setIsTrackLoading(false); // <-- CLEAR LOADING (especially for mobile)
+    };
+
     audio.addEventListener('play', handleAudioPlay);
     audio.addEventListener('pause', handleAudioPause);
     audio.addEventListener('ended', handleAudioEnded);
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('volumechange', handleVolumeChange);
+    audio.addEventListener('canplay', handleCanPlay);
 
-    // --- Initial Sync Logic (Restore) ---
     setVolume(audio.volume);
     setIsMuted(audio.muted);
     if(!isNaN(audio.duration)) { 
@@ -329,7 +332,6 @@ export default function SongIdeasPage() {
         setCurrentTime(audio.currentTime);
     }
 
-    // --- Cleanup Listeners --- 
     return () => {
       audio.removeEventListener('play', handleAudioPlay);
       audio.removeEventListener('pause', handleAudioPause);
@@ -337,7 +339,6 @@ export default function SongIdeasPage() {
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('volumechange', handleVolumeChange);
-      // Restore timeout clearance
       if (timeUpdateThrottleRef.current) {
           clearTimeout(timeUpdateThrottleRef.current);
           timeUpdateThrottleRef.current = null;
@@ -351,7 +352,6 @@ export default function SongIdeasPage() {
     const currentAudio = audioRef.current;
     const currentWaveformContainer = waveformRef.current;
     if (isMobile) {
-        // Cleanup on mobile
         if (wavesurferInstanceRef.current) {
             wavesurferInstanceRef.current.destroy();
             wavesurferInstanceRef.current = null;
@@ -359,10 +359,8 @@ export default function SongIdeasPage() {
         return;
     }
 
-    // --- Desktop Logic ---
     if (!currentAudio || !currentWaveformContainer) return;
 
-    // Initialize WaveSurfer if it doesn't exist for desktop
     if (!wavesurferInstanceRef.current) {
         console.log("[WaveSurfer Effect] Initializing NEW instance for Desktop...");
         const ws = WaveSurfer.create({
@@ -382,48 +380,46 @@ export default function SongIdeasPage() {
         ws.on('ready', (durationValue) => {
             console.log("[WaveSurfer] Ready.", durationValue);
             setDuration(durationValue);
-            setIsFadingWaveform(false); // Trigger fade IN
+            setIsFadingWaveform(false);
+            setIsTrackLoading(false); // <-- CLEAR LOADING on ready
         });
 
         ws.on('audioprocess', (currentTimeValue) => setCurrentTime(currentTimeValue));
         ws.on('seeking', (currentTimeValue) => setCurrentTime(currentTimeValue));
         ws.on('error', (error) => {
              console.error('[WaveSurfer] Error:', error);
-             setIsFadingWaveform(false); // Ensure fade is off on error
+             setIsFadingWaveform(false);
+             setIsTrackLoading(false); // <-- CLEAR LOADING on error
         });
-        ws.on('finish', () => { /* ... unchanged (play next) ... */ });
+        ws.on('finish', () => {
+            if (currentPlayingIndex !== null && demos.length > 1) {
+                const nextIndex = (currentPlayingIndex + 1) % demos.length;
+                handlePlayClick(nextIndex);
+            }
+        });
 
         wavesurferInstanceRef.current = ws;
 
-        // If a track is already selected and loaded in audioRef, load it into WS
         if (currentAudio.src && currentPlayingIndex !== null) {
              console.log("[WS Effect] Loading initial media:", currentAudio.src);
-              // Don't fade initially, just load
              setIsFadingWaveform(false);
              ws.load(currentAudio.src).catch(e => {
                  console.error("WS initial load error:", e);
              });
         } else {
-            setIsFadingWaveform(false); // Ensure fade is off if no initial track
+            setIsFadingWaveform(false);
         }
     }
 
-    // Cleanup only when switching to mobile or unmounting main component
     return () => {
-        // Destroy only if the component unmounts while on desktop
         if (isMobile === false) {
              console.log("[WaveSurfer Effect] Cleanup running (Desktop). Instance will persist unless unmounting.");
-             // Maybe don't destroy here? Let the mobile switch handle it.
         }
-        // If component unmounts, destroy instance regardless
-        // This requires a different pattern, maybe a top-level effect cleanup
     };
 
-  }, [isMobile, currentPlayingIndex]); // Only run when isMobile changes OR on initial mount
+  }, [isMobile, currentPlayingIndex, demos, handlePlayClick]);
 
-  // Separate effect for destroying WS on unmount
-   useEffect(() => {
-       // Return cleanup function that captures the instance ref
+  useEffect(() => {
        const wsRef = wavesurferInstanceRef;
        return () => {
            console.log("Component unmounting, destroying WaveSurfer if it exists.");
@@ -432,9 +428,8 @@ export default function SongIdeasPage() {
                wsRef.current = null;
            }
        };
-   }, []); // Empty array ensures this runs only on unmount
+   }, []);
 
-  // Cleanup fade timeout on unmount
   useEffect(() => {
       const timeoutRef = fadeTimeoutRef;
       return () => {
@@ -444,7 +439,6 @@ export default function SongIdeasPage() {
       };
   }, []);
 
-  // Adjusted item size again
   const itemSize = 120;
 
   const handleSeek = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -496,55 +490,42 @@ export default function SongIdeasPage() {
       handlePlayClick(nextIndex);
   };
 
-  // New Handler: Seek Backward 15 seconds
   const handleSeekBackward = () => {
     if (!audioRef.current) return;
     const newTime = Math.max(0, audioRef.current.currentTime - 15);
     audioRef.current.currentTime = newTime;
-    setCurrentTime(newTime); // Update UI immediately
+    setCurrentTime(newTime);
   };
 
-  // New Handler: Seek Forward 15 seconds
   const handleSeekForward = () => {
     if (!audioRef.current || isNaN(audioRef.current.duration)) return;
     const newTime = Math.min(audioRef.current.duration, audioRef.current.currentTime + 15);
     audioRef.current.currentTime = newTime;
-    setCurrentTime(newTime); // Update UI immediately
+    setCurrentTime(newTime);
   };
 
   return (
-    // Apply the main site layout classes and make it relative for absolute positioning of children
     <div className="min-h-screen bg-black text-white flex flex-col relative">
-      {/* Aurora Background */}
       <Aurora
-        className="absolute inset-0 z-0 opacity-30" // Positioned behind content, adjust opacity as needed
-        colorStops={auroraColorStops} // Use the stable variable
+        className="absolute inset-0 z-0 opacity-30"
+        colorStops={auroraColorStops}
         blend={0.5}
         amplitude={1.0}
         speed={0.5}
       />
 
-      {/* Container for top content + sticky header - Make content relative and give z-index to ensure it's above aurora */}
       <div className="max-w-7xl w-full mx-auto px-4 pt-8 relative z-10">
-        {/* --- Sticky Header Div --- */}
-        {/* Apply sticky, z-index. Negative margins pull it edge-to-edge within padding, py adds vertical space */}
-        {/* REMOVED bg-black to make it transparent */}
         <div className="sticky top-0 z-20 py-3 -mt-8 -mx-4 px-4 mb-4">
-          {/* Keep existing link styles (font, hover, etc.) */}
           <Link href="/" className="text-1xl font-mono block hover:text-yellow-400 transition-colors duration-200">
             &larr; back to home
           </Link>
         </div>
-        {/* --- End Sticky Header Div --- */}
         
-        {/* Apply mono font to heading */}
         <h1 className="text-4xl font-mono mb-6">song_ideas.mp3</h1>
         <p className="mb-8 font-mono text-gray-300">song ideas synced from my dropbox, some rough, some refined</p>
       </div>
 
-      {/* List container - takes remaining height - Make content relative and give z-index */}
-      <div ref={containerRef} className={`flex-grow max-w-7xl w-full mx-auto px-4 ${currentPlayingIndex !== null ? 'pb-0' : ''} relative z-10`}> {/* Add relative z-10 */}
-        {/* Loading/Error/No Demos messages will inherit text-white */}
+      <div ref={containerRef} className={`flex-grow max-w-7xl w-full mx-auto px-4 ${currentPlayingIndex !== null ? 'pb-0' : ''} relative z-10`}>
         {isLoading && <p>Loading latest demos...</p>}
         {error && <p className="text-red-500">{error}</p>}
         {!isLoading && !error && demos.length === 0 && (
@@ -553,34 +534,28 @@ export default function SongIdeasPage() {
 
         {!isLoading && !error && demos.length > 0 && (
           <List
-            height={listHeight} // Use dynamic height
+            height={listHeight}
             itemCount={demos.length}
-            itemSize={itemSize} // Pass estimated item height
-            width="100%" // Take full width of container
-            itemData={{ demos, handlePlayClick, currentPlayingIndex, isPlaying, enableDownloads: ENABLE_DOWNLOADS }} // Pass necessary data and handlers to Row
-            overscanCount={5} // Render more items above/below viewport
+            itemSize={itemSize}
+            width="100%"
+            itemData={{ demos, handlePlayClick, currentPlayingIndex, isPlaying, enableDownloads: ENABLE_DOWNLOADS }}
+            overscanCount={5}
           >
             {Row}
           </List>
         )}
       </div>
 
-      {/* --- Enhanced Bottom Player Bar --- */}
-      {/* Ensure player bar is above the background (already has z-50) */}
       {currentPlayingIndex !== null && demos[currentPlayingIndex] && (
-          // Refactor for responsive layout: flex-col default, sm:flex-row
           <div className="fixed bottom-0 left-0 right-0 bg-gray-900 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:pb-3 border-t border-gray-700 z-50 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-sm">
 
-              {/* --- Waveform (Desktop) OR Seek Bar (Mobile) --- */}
               {isMobile === false && (
                   <div
                       ref={waveformRef}
-                      // Add transition and conditional opacity classes
                       className={`w-full order-1 sm:order-2 sm:flex-grow h-[70px] cursor-pointer relative transition-opacity duration-500 ease-in-out ${
                           isFadingWaveform ? 'opacity-0' : 'opacity-100'
                       }`}
                   >
-                      {/* WaveSurfer will render here */}
                   </div>
               )}
               {isMobile === true && (
@@ -598,31 +573,24 @@ export default function SongIdeasPage() {
                    </div>
               )}
 
-              {/* --- Control Buttons Group (Order 2 mobile, Order 1 desktop) --- */}
               <div className="flex justify-center items-center gap-1 sm:gap-1 order-2 sm:order-1">
-                  {/* Restart Button - Add focus-visible:ring-0 and !important */} 
                   <Button variant="ghost" onClick={handleRestart} title="Restart track" className="text-white hover:bg-gray-700 p-2 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:ring-offset-0 active:!bg-transparent"> 
                       <Rewind className="h-8 w-8" /> 
                   </Button>
-                  {/* --- Rewind 15s Button - Add focus-visible:ring-0 and !important --- */}
                   <Button variant="ghost" onClick={handleSeekBackward} title="Rewind 15s" className="text-white hover:bg-gray-700 p-2 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:ring-offset-0 active:!bg-transparent"> 
                       <Undo2 className="h-8 w-8" />
                   </Button>
-                  {/* Play/Pause Button - Add focus-visible:ring-0 and !important */} 
                   <Button variant="ghost" onClick={togglePlayPause} className="text-white hover:bg-gray-700 p-2 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:ring-offset-0 active:!bg-transparent"> 
                       {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />} 
                   </Button>
-                  {/* --- Skip 15s Button - Add focus-visible:ring-0 and !important --- */} 
                   <Button variant="ghost" onClick={handleSeekForward} title="Skip 15s" className="text-white hover:bg-gray-700 p-2 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:ring-offset-0 active:!bg-transparent"> 
                       <Redo2 className="h-8 w-8" /> 
                   </Button>
-                  {/* Next Button - Add focus-visible:ring-0 and !important */} 
                   <Button variant="ghost" onClick={handleSkipNext} title="Next track" className="text-white hover:bg-gray-700 p-2 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:ring-offset-0 active:!bg-transparent"> 
                       <SkipForward className="h-8 w-8" />
                   </Button>
               </div>
 
-              {/* --- Mobile Volume Control (Order 3 mobile, hidden desktop) --- */}
               <div className="flex justify-center items-center gap-2 w-full order-3 sm:hidden">
                    <Button variant="ghost" size="icon" onClick={toggleMute} className="text-white hover:bg-gray-700">
                       {isMuted || volume === 0 ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
@@ -634,12 +602,10 @@ export default function SongIdeasPage() {
                       step="0.01"
                       value={isMuted ? 0 : volume}
                       onChange={handleVolume}
-                      // Use w-1/2 for narrower mobile volume slider
                       className="w-1/2 h-1 bg-gray-700 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-yellow-400"
                    />
               </div>
 
-              {/* --- Desktop Volume Control (hidden mobile, Order 3 desktop) --- */}
               <div className="hidden sm:flex items-center gap-2 order-3">
                    <Button variant="ghost" size="icon" onClick={toggleMute} className="text-white hover:bg-gray-700">
                       {isMuted || volume === 0 ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
@@ -655,16 +621,13 @@ export default function SongIdeasPage() {
                   />
               </div>
 
-              {/* --- Track Title (Fixed Width, Truncated) --- */}
                <p className="hidden md:block font-mono text-gray-400 ml-4 order-4 w-48 overflow-hidden truncate">
                  {currentPlayingIndex !== null ? cleanFileName(demos[currentPlayingIndex].fileName) : ''}
                </p>
 
           </div>
       )}
-      {/* --- End Bottom Player Bar --- */}
 
-      {/* Hidden audio element for playback - Keep preload="metadata" */}
       <audio ref={audioRef} preload="metadata" className="hidden">
             Your browser doesn&apos;t support embedded audio.
       </audio>
