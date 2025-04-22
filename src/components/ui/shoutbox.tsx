@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -43,6 +43,7 @@ export function Shoutbox() {
   const [username, setUsername] = useState("")
   const [message, setMessage] = useState("")
   const [isLoading, setIsLoading] = useState(true)
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   // Define fetch function outside useEffect, wrapped in useCallback
   const fetchMessages = useCallback(async () => {
@@ -78,6 +79,13 @@ export function Shoutbox() {
     return () => clearInterval(intervalId);
   }, [fetchMessages]); // fetchMessages is now a dependency
 
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  }, [messages]); // Dependency: run when messages array updates
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!username.trim() || !message.trim()) return
@@ -112,7 +120,10 @@ export function Shoutbox() {
 
   return (
     <div className="space-y-3">
-      <div className="h-[120px] overflow-y-auto space-y-2 p-2 bg-black/20 rounded-lg">
+      <div 
+        ref={messagesContainerRef}
+        className="h-[120px] overflow-y-auto space-y-2 p-2 bg-black/20 rounded-lg"
+      >
         {isLoading ? (
           <div className="text-center text-gray-400">Loading messages...</div>
         ) : messages.length === 0 ? (

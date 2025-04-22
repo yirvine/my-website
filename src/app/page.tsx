@@ -105,7 +105,7 @@ export default function Portfolio() {
           <div>
             <p className="text-gray-50 text-lg leading-relaxed text-justify">
             I&apos;m a software engineer who builds projects that mix what I&apos;m 
-            learning with what I&apos;m into.</p>
+            into with what I&apos;m skilled at.</p>
 
             {/* Toggle Button - Moved up, added margin */}
             <Button 
@@ -160,7 +160,7 @@ export default function Portfolio() {
               </Link>
 
               <Link href="/listening" className="block hover:text-yellow-400 transition-colors">
-                → recent listening
+                {/* → recent listening */}
               </Link>
             </div>
           </div>
