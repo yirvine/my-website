@@ -216,7 +216,7 @@ export default function Portfolio() {
           {/* Stack Section -> Resume Section */}
           <section className="bg-blue-800 rounded-xl px-4 py-3">
             <Link 
-              href="/CV-2025.pdf"
+              href="/Yene-Irvine-Resume-2025.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="flex justify-between items-center hover:opacity-80 transition-opacity"
