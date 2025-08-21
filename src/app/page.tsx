@@ -27,6 +27,12 @@ export default function Portfolio() {
       link: "https://github.com/yirvine/spotify-DJ-setlist-generator#readme"
     },
     {
+      title: "LUFS Audio Normalizer",
+      description: "Batch MP3 loudness normalizer targeting LUFS and true peak using ffmpeg, with drag-and-drop UI and Next.js API for analysis and normalization.",
+      link: "https://github.com/yirvine/audio-normalizer#readme",
+      image: "/images/7.png"
+    },
+    {
       title: "Predicting Song Popularity with Machine Learning",
       description: "What makes a song popular? This PySpark-powered project analyzes audio features from top global artists using Spotify's Web API — and applies various ML models to predict a track's popularity.",
       link: "https://github.com/yirvine/Pop-Music-Trend-Analysis#readme"
@@ -192,7 +198,7 @@ export default function Portfolio() {
                     >
                       <div className="relative aspect-[3/2] bg-gray-900 rounded-lg overflow-hidden group hover:bg-gray-800 transition-colors duration-300 cursor-pointer">
                         <Image 
-                          src={`/images/${i + 1}.png`}
+                          src={project.image ?? `/images/${i + 1}.png`}
                           alt={project.title}
                           fill 
                           className="object-cover"
