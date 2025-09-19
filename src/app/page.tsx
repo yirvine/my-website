@@ -160,9 +160,9 @@ export default function Portfolio() {
               <Link href="/webcam" className="block hover:text-yellow-400 transition-colors">
                 → a cool webcam
               </Link>
-              <Link href="/song-ideas" className="block hover:text-yellow-400 transition-colors">
+              {/* <Link href="/song-ideas" className="block hover:text-yellow-400 transition-colors">
                 → demo songs
-              </Link>
+              </Link> */}
 
               <Link href="/listening" className="block hover:text-yellow-400 transition-colors">
                 {/* → recent listening */}
