@@ -12,6 +12,12 @@ export default function Portfolio() {
   const [isBioExpanded, setIsBioExpanded] = useState(false);
   const allProjects = [
     {
+      title: "ReliefGuard",
+      description: "Modern web application for sizing relief valves and documenting scenarios, designed to replace manual spreadsheets and improve consistency in pressure relief system design.",
+      link: "https://github.com/yirvine/reliever#readme",
+      image: "/images/8.png"
+    },
+    {
       title: "RunIt",
       description: "A mobile running app built with React Native. Tracks runs, connects runners, and brings data to your stride.",
       link: "https://github.com/yirvine/runit#readme"
@@ -197,7 +203,7 @@ export default function Portfolio() {
                     >
                       <div className="relative aspect-[3/2] bg-gray-900 rounded-lg overflow-hidden group hover:bg-gray-800 transition-colors duration-300 cursor-pointer">
                         <Image 
-                          src={`/images/${i + 1}.png`}
+                          src={project.image ?? `/images/${i + 1}.png`}
                           alt={project.title}
                           fill 
                           className="object-cover"
