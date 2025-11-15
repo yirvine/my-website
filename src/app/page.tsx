@@ -15,42 +15,49 @@ export default function Portfolio() {
       title: "ReliefGuard",
       description: "Modern web application for sizing relief valves and documenting scenarios, designed to replace manual spreadsheets and improve consistency in pressure relief system design.",
       link: "https://www.reliefguard.ca",
-      image: "/images/8.png"
+      image: "/images/reliefguard.png"
     },
     {
       title: "RunIt",
       description: "A mobile running app built with React Native. Tracks runs, connects runners, and brings data to your stride.",
-      link: "https://github.com/yirvine/runit#readme"
+      link: "https://github.com/yirvine/runit#readme",
+      image: "/images/runit.png"
     },
     {
       title: "XAI Image Classifier",
       description: "Seeing through AI's eyes: A CNN-based model with Integrated Gradients to visualize a model's 'thinking' process in classifying satellite images",
-      link: "https://github.com/yirvine/XAI-in-image-classification#readme"
+      link: "https://github.com/yirvine/XAI-in-image-classification#readme",
+      image: "/images/xai.png"
     },
     {
       title: "LUFS Audio Normalizer",
       description: "Batch MP3 loudness normalizer targeting LUFS and true peak using ffmpeg, with drag-and-drop UI and Next.js API for analysis and normalization.",
-      link: "https://github.com/yirvine/audio-normalizer#readme"
+      link: "https://github.com/yirvine/audio-normalizer#readme",
+      image: "/images/lufs.png"
     },
     {
       title: "Spotify Setlist Generator",
       description: "An AI-powered tool that generates DJ setlists based on your music taste and mixing preferences.",
-      link: "https://github.com/yirvine/spotify-DJ-setlist-generator#readme"
+      link: "https://github.com/yirvine/spotify-DJ-setlist-generator#readme",
+      image: "/images/spotify_setlister.png"
     },
     {
       title: "Detect Breathing Problems with Deep Learning",
       description: "An innovative PyTorch-based 3D Convolutional Neural Network to detect breathing patterns in sleeping clients via video to promptly identify medical emergencies. Done in collaboration with University of Calgary Biometrics Lab.",
-      link: "https://github.com/chvaldez10/Team-Design-Project#readme"
+      link: "https://github.com/chvaldez10/Team-Design-Project#readme",
+      image: "/images/deep_learning.png"
     },
     {
       title: "Predicting Song Popularity with Machine Learning",
       description: "What makes a song popular? This PySpark-powered project analyzes audio features from top global artists using Spotify's Web API — and applies various ML models to predict a track's popularity.",
-      link: "https://github.com/yirvine/Pop-Music-Trend-Analysis#readme"
+      link: "https://github.com/yirvine/Pop-Music-Trend-Analysis#readme",
+      image: "/images/pop_music.png"
     },
     {
       title: "This Website",
       description: "The code behind, well, this.",
-      link: "https://github.com/yirvine/my-website"
+      link: "https://github.com/yirvine/my-website",
+      image: "/images/website.png"
     }
   ]
   const [galleryImageUrls, setGalleryImageUrls] = useState<string[]>([]);
