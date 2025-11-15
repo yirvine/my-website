@@ -14,7 +14,7 @@ export default function Portfolio() {
     {
       title: "ReliefGuard",
       description: "Modern web application for sizing relief valves and documenting scenarios, designed to replace manual spreadsheets and improve consistency in pressure relief system design.",
-      link: "https://github.com/yirvine/reliever#readme",
+      link: "https://www.reliefguard.ca",
       image: "/images/8.png"
     },
     {
